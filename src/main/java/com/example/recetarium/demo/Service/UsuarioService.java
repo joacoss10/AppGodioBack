@@ -34,46 +34,46 @@ public class UsuarioService {
             codigoVerificacioService.crearCodigoDeVerificacionCuenta(usuario);
             Notificador notificador = new Notificador(op.get().getMail(), op.get().getIdUsuario());
 
-        }else{//VERIFICO CUAL ES EL CAMPO REPETIDO
-            if(op.get().getEstadoVerificacion()==2 && !codigoVerificacioService.vencido(op.get().getIdUsuario())){
-               response.setCodigo(910); //sigfinica que puede ir a verificar codigo
-            }
-            else{if(op.get().getEstadoVerificacion()==0){//SE LE VENCIO EL PLAZO DE VERIFICACION
-                response.setCodigo(900);// significa que el codigo vencio y hay que noticiarle
-            }
-            else{//CUENTA VERIFICADA POR LO QUE EL USUARIO ESTA INGRESANDO CON DATOS ERRONEOS
-                if(op.get().getAlias().equals(requestDto.getAlias())){//COMPARO SI EL ALIAS ES IGUAL AL QUE INGRESO, EL ALIAS ES EL REPETIDO
+        } else {//VERIFICO si es el usuario tratando de verificar el codigo o si alguien quiere repetir valores
+            if (op.get().getAlias().equals(requestDto.getAlias()) && op.get().getMail().equals(requestDto.getMail())) {//si el mail y el alias coincide chequea que que pueda ir a verificar
+                if (op.get().getEstadoVerificacion() == 2 && !codigoVerificacioService.vencido(op.get().getIdUsuario())) {
+                    response.setCodigo(910); //sigfinica que puede ir a verificar codigo
+                } else if (op.get().getEstadoVerificacion() == 0) {
+                    response.setCodigo(900);// significa que el codigo vencio y hay que noticiarle
+                }
+            } else {
+                if (op.get().getAlias().equals(requestDto.getAlias())) {//COMPARO SI EL ALIAS ES IGUAL AL QUE INGRESO, EL ALIAS ES EL REPETIDO
                     response.setAlias(op.get().getAlias());
-                }
-                else{//LO INVERSO AL ANTERIOR, EL REPETIDO ES EL MAIL
+                    response.setCodigo(800);//REPETICION DE UN CAMPO
+                } else {//LO INVERSO AL ANTERIOR, EL REPETIDO ES EL MAIL
                     response.setMail(op.get().getMail());
+                    response.setCodigo(800);//REPETICION DE UN CAMPO
                 }
-                response.setCodigo(409);//codigo de datos repetidos, SE ENCARGA EL FRONT
-            }
             }
         }
-        return response;
-    }
-    public void datosUsuario(UsuarioRequestDto requestDto){//Actualizo datos de usuario (nombre, apellido, direccion) y lo guardo.Se actualiza por ID
-        Optional<Usuario> user=repository.findByMailOrAlias(requestDto.getMail(),requestDto.getAlias());
-        Usuario usuario=new Usuario();
-        usuario.setApellido(requestDto.getApellido());
-        usuario.setNombre(requestDto.getNombre());
-        usuario.setDireccion(requestDto.getDireccion());
-        usuario.setIdUsuario(user.get().getIdUsuario());
-        repository.save(usuario);
-    }
-    public void cambiarEstadoVerificacion(int codigo,Long idUsuario){
-       Optional <Usuario> usuario=repository.findById(idUsuario);
-       usuario.get().setEstadoVerificacion(codigo);
-       if(codigo==1){
-           usuario.get().setHabilitado(true);
-       }
-       repository.save(usuario.get());
-    }
-    public Long getId(String mail, String alias){
-        Optional<Usuario> user=repository.findByMailOrAlias(mail,alias);
-        return user.get().getIdUsuario();
-    }
+            return response;
+        }
+        public void datosUsuario (UsuarioRequestDto requestDto)
+        {//Actualizo datos de usuario (nombre, apellido, direccion) y lo guardo.Se actualiza por ID
+            Optional<Usuario> user = repository.findByMailOrAlias(requestDto.getMail(), requestDto.getAlias());
+            Usuario usuario = new Usuario();
+            usuario.setApellido(requestDto.getApellido());
+            usuario.setNombre(requestDto.getNombre());
+            usuario.setDireccion(requestDto.getDireccion());
+            usuario.setIdUsuario(user.get().getIdUsuario());
+            repository.save(usuario);
+        }
+        public void cambiarEstadoVerificacion ( int codigo, Long idUsuario){
+            Optional<Usuario> usuario = repository.findById(idUsuario);
+            usuario.get().setEstadoVerificacion(codigo);
+            if (codigo == 1) {
+                usuario.get().setHabilitado(true);
+            }
+            repository.save(usuario.get());
+        }
+        public Long getId (String mail, String alias){
+            Optional<Usuario> user = repository.findByMailOrAlias(mail, alias);
+            return user.get().getIdUsuario();
+        }
 
     }
