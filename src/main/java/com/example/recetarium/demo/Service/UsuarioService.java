@@ -6,6 +6,7 @@ import com.example.recetarium.demo.Model.Usuario;
 import com.example.recetarium.demo.Repository.UsuarioRepository;
 import com.example.recetarium.demo.Utiles.Notificador;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -14,13 +15,15 @@ import java.util.Optional;
 public class UsuarioService {
     @Autowired
     private UsuarioRepository repository;
+    @Lazy
+    @Autowired
     private CodigoVerificacioService codigoVerificacioService;
-    public UsuarioResponseDto crearUsuario(UsuarioRequestDto requestDto){//Creacion de usurio solo por MAIL Y ALIAS
-        Usuario usuario=new Usuario();
-        UsuarioResponseDto response=new UsuarioResponseDto();
-        Optional<Usuario> op=repository.findByMailOrAlias(requestDto.getMail(),requestDto.getAlias());
+    public UsuarioResponseDto crearUsuario(UsuarioRequestDto requestDto) {//Creacion de usurio solo por MAIL Y ALIAS
+        Usuario usuario = new Usuario();
+        UsuarioResponseDto response = new UsuarioResponseDto();
+        Optional<Usuario> op = repository.findByMailOrAlias(requestDto.getMail(), requestDto.getAlias());
 
-        if(op.isEmpty()){//si no existe ni mail ni alias lo guardo
+        if (op.isEmpty()) {//si no existe ni mail ni alias lo guardo
             usuario.setAlias(requestDto.getAlias());
             usuario.setMail(requestDto.getMail());
             usuario.setEstadoVerificacion(2);//SETEA QUE EL CODIGO ESTA PENDIENTE DE VERIFICAR
@@ -29,7 +32,7 @@ public class UsuarioService {
 
             //CREACION DEL CODIGO DE VERIFICACION DE LA CUENTA
             codigoVerificacioService.crearCodigoDeVerificacionCuenta(usuario);
-            Notificador notificador=new Notificador(op.get().getMail(),op.get().getIdUsuario());
+            Notificador notificador = new Notificador(op.get().getMail(), op.get().getIdUsuario());
 
         }else{//VERIFICO CUAL ES EL CAMPO REPETIDO
             if(op.get().getEstadoVerificacion()==2 && !codigoVerificacioService.vencido(op.get().getIdUsuario())){
@@ -73,4 +76,4 @@ public class UsuarioService {
         return user.get().getIdUsuario();
     }
 
-}
+    }
