@@ -31,11 +31,11 @@ public class UsuarioService {
             usuario.setMail(requestDto.getMail());
             usuario.setEstadoVerificacion(2);//SETEA QUE EL CODIGO ESTA PENDIENTE DE VERIFICAR
             repository.save(usuario);
-
+            response.setCodigo(910);
 
             //CREACION DEL CODIGO DE VERIFICACION DE LA CUENTA
             codigoVerificacioService.crearCodigoDeVerificacionCuenta(usuario);
-            notificador.enviarMail(requestDto.getMail(),requestDto.getAlias());
+            notificador.enviarMailCodigoVerificacion(requestDto.getMail(),requestDto.getAlias());
 
         } else {//VERIFICO si es el usuario tratando de verificar el codigo o si alguien quiere repetir valores
             if (op.get().getAlias().equals(requestDto.getAlias()) && op.get().getMail().equals(requestDto.getMail())) {//si el mail y el alias coincide chequea que que pueda ir a verificar
@@ -59,12 +59,13 @@ public class UsuarioService {
         public void datosUsuario (UsuarioRequestDto requestDto)
         {//Actualizo datos de usuario (nombre, apellido, direccion) y lo guardo.Se actualiza por ID
             Optional<Usuario> user = repository.findByMailOrAlias(requestDto.getMail(), requestDto.getAlias());
-            Usuario usuario = new Usuario();
-            usuario.setApellido(requestDto.getApellido());
-            usuario.setNombre(requestDto.getNombre());
-            usuario.setDireccion(requestDto.getDireccion());
-            usuario.setIdUsuario(user.get().getIdUsuario());
-            repository.save(usuario);
+            if(user.isPresent()) {
+                Usuario usuario = user.get();
+                usuario.setApellido(requestDto.getApellido());
+                usuario.setNombre(requestDto.getNombre());
+                usuario.setDireccion(requestDto.getDireccion());
+                repository.save(usuario);
+            }
         }
         public void cambiarEstadoVerificacion ( int codigo, Long idUsuario){
             Optional<Usuario> usuario = repository.findById(idUsuario);
@@ -76,7 +77,20 @@ public class UsuarioService {
         }
         public Long getId (String mail, String alias){
             Optional<Usuario> user = repository.findByMailOrAlias(mail, alias);
-            return user.get().getIdUsuario();
+            if(user.isEmpty()){
+                return Long.valueOf(-1);//NO EXISTE EL USUARIO CON ESOS CAMPOS
+            }else {
+                return user.get().getIdUsuario();
+            }
+        }
+        public void guardarContraseniaa(String mail,String alias, String contrsenia){
+            Optional<Usuario> user = repository.findByMailOrAlias(mail, alias);
+            if(user.isPresent()){
+                Usuario usuario=user.get();
+                usuario.setContrasenia(contrsenia);
+                repository.save(usuario);
+
+            }
         }
 
     }

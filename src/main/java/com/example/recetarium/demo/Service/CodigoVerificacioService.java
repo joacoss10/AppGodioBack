@@ -5,9 +5,12 @@ import com.example.recetarium.demo.DTOs.CodigoVerificacionResponseDto;
 import com.example.recetarium.demo.Model.CodigoDeVerificacion;
 import com.example.recetarium.demo.Model.Usuario;
 import com.example.recetarium.demo.Repository.CodigoVerificacion;
+import com.example.recetarium.demo.Utiles.Notificador;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
+import java.security.SecureRandom;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -15,8 +18,12 @@ import java.util.Random;
 
 @Service
 public class CodigoVerificacioService {
+    @Lazy
+    @Autowired
+    Notificador notificador;
     @Autowired
     private CodigoVerificacion repositoryVerificacion;
+
     @Autowired
     private UsuarioService usuarioService;
 
@@ -53,12 +60,32 @@ public class CodigoVerificacioService {
         Optional<CodigoDeVerificacion> codigoDeVerificacion=repositoryVerificacion.findByUsuario_IdUsuario(idUsuario);
         if(codigoDeVerificacion.get().getCodigoVerificacion()== dto.getCodigo()){
             responseDto.setCodigo(200);
+            String contrasenia=generadorDeContrasenias();
             usuarioService.cambiarEstadoVerificacion(1,idUsuario);
+            usuarioService.guardarContraseniaa(dto.getMailUsuario(),dto.getAliasUsuario(),contrasenia);
+            notificador.enviarContrasenia(dto.getMailUsuario(), contrasenia);
         }
         else{
             responseDto.setCodigo(400);//INDICA QUE EL CODIGO ES INCORRECTO
         }
         return  responseDto;
+    }
+    private String generadorDeContrasenias(){
+        String mayus = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        String minus = "abcdefghijklmnopqrstuvwxyz";
+        String numeros = "0123456789";
+        String simbolos = "!@#$%&*()-_=+";
+
+        String todos = mayus + minus + numeros + simbolos;
+
+        SecureRandom random = new SecureRandom();
+        StringBuilder contrasenia = new StringBuilder();
+
+        for (int i = 0; i < 5; i++) {
+            int index = random.nextInt(todos.length());
+            contrasenia.append(todos.charAt(index));
+        }
+        return contrasenia.toString();
     }
 
 }

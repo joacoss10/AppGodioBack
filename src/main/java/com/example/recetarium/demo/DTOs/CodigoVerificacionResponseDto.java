@@ -10,4 +10,5 @@ public class CodigoVerificacionResponseDto {
     public int getCodigo() {
         return codigo;
     }
+
 }

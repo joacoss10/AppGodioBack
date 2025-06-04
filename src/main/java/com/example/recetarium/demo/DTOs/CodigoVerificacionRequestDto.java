@@ -2,12 +2,12 @@ package com.example.recetarium.demo.DTOs;
 
 public class CodigoVerificacionRequestDto {
     private String mailUsuario;
-    private String AliasUsuario;
+    private String aliasUsuario;
     private int codigo;
 
-    public CodigoVerificacionRequestDto(String mailUsuario, String aliasUsuari, int codigo) {
+    public CodigoVerificacionRequestDto(String mailUsuario, String aliasUsuario, int codigo) {
         this.mailUsuario = mailUsuario;
-        AliasUsuario = aliasUsuari;
+        this.aliasUsuario = aliasUsuario;
         this.codigo = codigo;
     }
 
@@ -16,7 +16,7 @@ public class CodigoVerificacionRequestDto {
     }
 
     public String getAliasUsuario() {
-        return AliasUsuario;
+        return aliasUsuario;
     }
 
     public int getCodigo() {

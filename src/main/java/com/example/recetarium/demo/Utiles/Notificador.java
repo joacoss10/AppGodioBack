@@ -16,12 +16,19 @@ public class Notificador {
     @Autowired
     private JavaMailSender mailSender;
 
-    public void enviarMail(String mailUsuario,String alias){
+    public void enviarMailCodigoVerificacion(String mailUsuario, String alias){
         SimpleMailMessage mensaje=new SimpleMailMessage();
         Long id=usuarioService.getId(mailUsuario,alias);
         mensaje.setTo(mailUsuario);
         mensaje.setSubject("CODIGO VERIFICACION CUENTA");
-        mensaje.setText("El codigo de verificacion de su cuenta es "+codigoVerificacioService.obtenerCodigo(id));
+        mensaje.setText("El codigo de verificacion de su cuenta es: "+codigoVerificacioService.obtenerCodigo(id));
+        mailSender.send(mensaje);
+    }
+    public void enviarContrasenia(String mail,String contra){
+        SimpleMailMessage mensaje=new SimpleMailMessage();
+        mensaje.setTo(mail);
+        mensaje.setSubject("Contraseña Recetarium");
+        mensaje.setText("Su contraseña de Recetarium es: "+contra);
         mailSender.send(mensaje);
     }
 
