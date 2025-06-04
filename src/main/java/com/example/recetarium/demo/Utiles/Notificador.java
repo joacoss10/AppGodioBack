@@ -1,34 +1,28 @@
 package com.example.recetarium.demo.Utiles;
 
-import com.example.recetarium.demo.Model.Usuario;
 import com.example.recetarium.demo.Service.CodigoVerificacioService;
 import com.example.recetarium.demo.Service.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.stereotype.Component;
 
-//coca?
-
+@Component
 public class Notificador {
     @Autowired
-    UsuarioService serviceUsuario;
+    UsuarioService usuarioService;
     @Autowired
     CodigoVerificacioService codigoVerificacioService;
+    @Autowired
     private JavaMailSender mailSender;
-    private String mailUsuario;
-    private Long idUsuario;
 
-
-    public Notificador(String mailUsuario, Long idUsuario) {
-        this.mailUsuario = mailUsuario;
-        this.idUsuario=idUsuario;
-    }
-
-    public void enviarMail(){
+    public void enviarMail(String mailUsuario,String alias){
         SimpleMailMessage mensaje=new SimpleMailMessage();
+        Long id=usuarioService.getId(mailUsuario,alias);
         mensaje.setTo(mailUsuario);
         mensaje.setSubject("CODIGO VERIFICACION CUENTA");
-        mensaje.setText("El codigo de verificacion de su cuenta es "+codigoVerificacioService.obtenerCodigo(idUsuario));
+        mensaje.setText("El codigo de verificacion de su cuenta es "+codigoVerificacioService.obtenerCodigo(id));
+        mailSender.send(mensaje);
     }
 
 }

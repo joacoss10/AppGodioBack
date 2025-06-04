@@ -17,11 +17,14 @@ public class UsuarioService {
     private UsuarioRepository repository;
     @Lazy
     @Autowired
+    Notificador notificador;
+    @Lazy
+    @Autowired
     private CodigoVerificacioService codigoVerificacioService;
     public UsuarioResponseDto crearUsuario(UsuarioRequestDto requestDto) {//Creacion de usurio solo por MAIL Y ALIAS
         Usuario usuario = new Usuario();
         UsuarioResponseDto response = new UsuarioResponseDto();
-        Optional<Usuario> op = repository.findByMailOrAlias(requestDto.getMail(), requestDto.getAlias());
+        Optional<Usuario> op = repository.findByMailOrAlias(requestDto.getMail(), requestDto.getAlias());//chequea si ya existe
 
         if (op.isEmpty()) {//si no existe ni mail ni alias lo guardo
             usuario.setAlias(requestDto.getAlias());
@@ -32,7 +35,7 @@ public class UsuarioService {
 
             //CREACION DEL CODIGO DE VERIFICACION DE LA CUENTA
             codigoVerificacioService.crearCodigoDeVerificacionCuenta(usuario);
-            Notificador notificador = new Notificador(op.get().getMail(), op.get().getIdUsuario());
+            notificador.enviarMail(requestDto.getMail(),requestDto.getAlias());
 
         } else {//VERIFICO si es el usuario tratando de verificar el codigo o si alguien quiere repetir valores
             if (op.get().getAlias().equals(requestDto.getAlias()) && op.get().getMail().equals(requestDto.getMail())) {//si el mail y el alias coincide chequea que que pueda ir a verificar
