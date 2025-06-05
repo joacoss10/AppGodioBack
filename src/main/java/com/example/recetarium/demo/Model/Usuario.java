@@ -1,7 +1,6 @@
 package com.example.recetarium.demo.Model;
 import jakarta.persistence.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -21,6 +20,7 @@ public class Usuario {
     @Column(unique = true)
     private String alias;
     private String mail;
+
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name="idAlumno",referencedColumnName = "idAlumno")
     private Alumno alumno;
@@ -53,6 +53,30 @@ public class Usuario {
 
     public String getApellido() {
         return apellido;
+    }
+
+    public void setRecetasCreadas(List<Receta> recetasCreadas) {
+        this.recetasCreadas = recetasCreadas;
+    }
+
+    public void setRecetaFavoritos(List<RecetaFavorito> recetaFavoritos) {
+        this.recetaFavoritos = recetaFavoritos;
+    }
+
+    public void setCalificaciones(List<Calificacion> calificaciones) {
+        this.calificaciones = calificaciones;
+    }
+
+    public List<Receta> getRecetasCreadas() {
+        return recetasCreadas;
+    }
+
+    public List<RecetaFavorito> getRecetaFavoritos() {
+        return recetaFavoritos;
+    }
+
+    public List<Calificacion> getCalificaciones() {
+        return calificaciones;
     }
 
     public String getDireccion() {

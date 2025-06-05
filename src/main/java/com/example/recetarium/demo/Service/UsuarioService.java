@@ -1,5 +1,7 @@
 package com.example.recetarium.demo.Service;
 
+import com.example.recetarium.demo.DTOs.LogginRequestDto;
+import com.example.recetarium.demo.DTOs.LogginResponseDto;
 import com.example.recetarium.demo.DTOs.UsuarioRequestDto;
 import com.example.recetarium.demo.DTOs.UsuarioResponseDto;
 import com.example.recetarium.demo.Model.Usuario;
@@ -92,5 +94,24 @@ public class UsuarioService {
 
             }
         }
-
+        public LogginResponseDto credencialesCorrectas(LogginRequestDto request){//user es el mail o alias
+            LogginResponseDto responseDto=new LogginResponseDto();
+            Optional<Usuario> user=repository.findByMailOrAlias(request.aliasOMail,request.aliasOMail);
+            if(user.isEmpty()){
+                responseDto.setCodigo(400);//No existe nadie con ese mail o alias
+            }else{
+                if(user.get().getContrasenia().equals(request.contrasenia)){
+                    responseDto.setCodigo(200);//Todo Ok la contrasnia es esa
+                    if(user.get().getAlumno()!=null){
+                        responseDto.setAlumno(true);
+                    }else {
+                        responseDto.setAlumno(false);
+                    }
+                }
+                else{
+                    responseDto.setCodigo(777);//contra mala
+                }
+            }
+            return responseDto;
+        }
     }

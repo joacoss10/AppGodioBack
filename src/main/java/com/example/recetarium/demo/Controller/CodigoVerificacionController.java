@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 
 @RestController
-@RequestMapping("/usuario/codeVerificacion")
+@RequestMapping("auth/usuario/codeVerificacion")
 public class CodigoVerificacionController {
   @Autowired
   private CodigoVerificacioService service;

@@ -7,11 +7,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/usuario")
+@RequestMapping("/auth/usuario")
 public class UsuarioController {
     @Autowired
     private UsuarioService service;
-    @PostMapping (params = {"mail","alias"})
+    @PostMapping
     public UsuarioResponseDto crearUsuario(@RequestParam String mail, @RequestParam String alias){
         UsuarioRequestDto request=new UsuarioRequestDto();
         request.setAlias(alias);
