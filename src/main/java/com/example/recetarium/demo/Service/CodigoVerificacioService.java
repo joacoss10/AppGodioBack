@@ -74,7 +74,7 @@ public class CodigoVerificacioService {
         String mayus = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
         String minus = "abcdefghijklmnopqrstuvwxyz";
         String numeros = "0123456789";
-        String simbolos = "!@#$%&*()-_=+";
+        String simbolos = "@#_";
 
         String todos = mayus + minus + numeros + simbolos;
 
