@@ -4,6 +4,7 @@ import com.example.recetarium.demo.DTOs.LogginRequestDto;
 import com.example.recetarium.demo.DTOs.LogginResponseDto;
 import com.example.recetarium.demo.DTOs.UsuarioRequestDto;
 import com.example.recetarium.demo.DTOs.UsuarioResponseDto;
+import com.example.recetarium.demo.Model.CodigoDeVerificacion;
 import com.example.recetarium.demo.Model.Usuario;
 import com.example.recetarium.demo.Repository.UsuarioRepository;
 import com.example.recetarium.demo.Utiles.Notificador;
@@ -32,13 +33,14 @@ public class UsuarioService {
             usuario.setAlias(requestDto.getAlias());
             usuario.setMail(requestDto.getMail());
             usuario.setEstadoVerificacion(2);//SETEA QUE EL CODIGO ESTA PENDIENTE DE VERIFICAR
+
+            //CREACION DEL CODIGO DE VERIFICACION DE LA CUENTA Y LO MACHEA CON USUARIO Y VICEVERSA
+            CodigoDeVerificacion codigo=codigoVerificacioService.crearCodigoDeVerificacionCuenta(usuario);
+            usuario.setCodVerificacion(codigo);
+            notificador.enviarMailCodigoVerificacion(requestDto.getMail(),requestDto.getAlias());//MANDA EL MAIL
+
             repository.save(usuario);
             response.setCodigo(910);
-
-            //CREACION DEL CODIGO DE VERIFICACION DE LA CUENTA
-            codigoVerificacioService.crearCodigoDeVerificacionCuenta(usuario);
-            notificador.enviarMailCodigoVerificacion(requestDto.getMail(),requestDto.getAlias());
-
         } else {//VERIFICO si es el usuario tratando de verificar el codigo o si alguien quiere repetir valores
             if (op.get().getAlias().equals(requestDto.getAlias()) && op.get().getMail().equals(requestDto.getMail())) {//si el mail y el alias coincide chequea que que pueda ir a verificar
                 if (op.get().getEstadoVerificacion() == 2 && !codigoVerificacioService.vencido(op.get().getIdUsuario())) {

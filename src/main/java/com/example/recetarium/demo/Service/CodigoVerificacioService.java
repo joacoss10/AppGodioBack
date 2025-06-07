@@ -27,7 +27,7 @@ public class CodigoVerificacioService {
     @Autowired
     private UsuarioService usuarioService;
 
-    public void crearCodigoDeVerificacionCuenta(Usuario usuario){
+    public CodigoDeVerificacion crearCodigoDeVerificacionCuenta(Usuario usuario){
         CodigoDeVerificacion codigo=new CodigoDeVerificacion();
         Random random=new Random();
         int numero = 10000 + random.nextInt(90000);
@@ -38,6 +38,7 @@ public class CodigoVerificacioService {
         codigo.setUsuario(usuario);
         codigo.setCodigoVerificacion(numero);
         repositoryVerificacion.save(codigo);
+        return codigo;
     }
     public int obtenerCodigo(Long idUsuario){
         Optional<CodigoDeVerificacion>op=repositoryVerificacion.findByUsuario_IdUsuario(idUsuario);
