@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Component;
+import org.springframework.scheduling.annotation.Async;
 
 @Component
 public class Notificador {
@@ -15,7 +16,7 @@ public class Notificador {
     CodigoVerificacioService codigoVerificacioService;
     @Autowired
     private JavaMailSender mailSender;
-
+    @Async
     public void enviarMailCodigoVerificacion(String mailUsuario, String alias){
         SimpleMailMessage mensaje=new SimpleMailMessage();
         Long id=usuarioService.getId(mailUsuario,alias);
@@ -24,6 +25,7 @@ public class Notificador {
         mensaje.setText("El codigo de verificacion de su cuenta es: "+codigoVerificacioService.obtenerCodigo(id));
         mailSender.send(mensaje);
     }
+    @Async
     public void enviarContrasenia(String mail,String contra){
         SimpleMailMessage mensaje=new SimpleMailMessage();
         mensaje.setTo(mail);
