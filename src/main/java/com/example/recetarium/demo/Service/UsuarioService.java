@@ -1,9 +1,6 @@
 package com.example.recetarium.demo.Service;
 
-import com.example.recetarium.demo.DTOs.LogginRequestDto;
-import com.example.recetarium.demo.DTOs.LogginResponseDto;
-import com.example.recetarium.demo.DTOs.UsuarioRequestDto;
-import com.example.recetarium.demo.DTOs.UsuarioResponseDto;
+import com.example.recetarium.demo.DTOs.*;
 import com.example.recetarium.demo.Model.CodigoDeVerificacion;
 import com.example.recetarium.demo.Model.Usuario;
 import com.example.recetarium.demo.Repository.UsuarioRepository;
@@ -96,7 +93,7 @@ public class UsuarioService {
 
             }
         }
-        public LogginResponseDto credencialesCorrectas(LogginRequestDto request){//user es el mail o alias
+        public LogginResponseDto credencialesCorrectas(LogginRequestDto request){//request es el mail o alias
             LogginResponseDto responseDto=new LogginResponseDto();
             Optional<Usuario> user=repository.findByMailOrAlias(request.aliasOMail,request.aliasOMail);
             if(user.isEmpty()){
@@ -115,5 +112,10 @@ public class UsuarioService {
                 }
             }
             return responseDto;
+        }
+
+        public Optional<Usuario> aliasOmailRecupero(CodigoRecuperoRequestDto aliasOmail){
+            Optional<Usuario> user=repository.findByMailOrAlias(aliasOmail.getAliasOMail(),aliasOmail.getAliasOMail());
+            return user;
         }
     }

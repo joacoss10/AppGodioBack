@@ -7,4 +7,5 @@ import java.util.Optional;
 
 public interface CodigoVerificacion extends JpaRepository<CodigoDeVerificacion,Long> {
     Optional<CodigoDeVerificacion> findByUsuario_IdUsuario(Long idUsuario);
+
 }

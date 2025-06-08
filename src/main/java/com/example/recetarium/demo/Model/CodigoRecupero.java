@@ -2,7 +2,7 @@ package com.example.recetarium.demo.Model;
 
 import jakarta.persistence.*;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 @Entity
 public class CodigoRecupero {
@@ -10,7 +10,7 @@ public class CodigoRecupero {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idCodioRecupero;
     @Column(nullable = false)
-    private Date fechaDeCreacion;
+    private LocalDateTime fechaDeCreacion;
     @Column (unique = true)
     private  int codigo;
 
@@ -22,7 +22,7 @@ public class CodigoRecupero {
         this.idCodioRecupero = idCodioRecupero;
     }
 
-    public void setFechaDeCreacion(Date fechaDeCreacion) {
+    public void setFechaDeCreacion(LocalDateTime fechaDeCreacion) {
         this.fechaDeCreacion = fechaDeCreacion;
     }
 
@@ -38,7 +38,7 @@ public class CodigoRecupero {
         return idCodioRecupero;
     }
 
-    public Date getFechaDeCreacion() {
+    public LocalDateTime getFechaDeCreacion() {
         return fechaDeCreacion;
     }
 

@@ -1,5 +1,6 @@
 package com.example.recetarium.demo.Utiles;
 
+import com.example.recetarium.demo.Model.Usuario;
 import com.example.recetarium.demo.Service.CodigoVerificacioService;
 import com.example.recetarium.demo.Service.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +24,14 @@ public class Notificador {
         mensaje.setTo(mailUsuario);
         mensaje.setSubject("CODIGO VERIFICACION CUENTA");
         mensaje.setText("El codigo de verificacion de su cuenta es: "+codigoVerificacioService.obtenerCodigo(id));
+        mailSender.send(mensaje);
+    }
+
+    public void enviarMailCodigoRecupero (String mailUsuario,int codigo){
+        SimpleMailMessage mensaje=new SimpleMailMessage();
+        mensaje.setTo(mailUsuario);
+        mensaje.setSubject("CODIGO DE RECUPERO DE CUENTA");
+        mensaje.setText("El codigo de recupeo de su cuenta es: "+ codigo);
         mailSender.send(mensaje);
     }
     @Async
