@@ -13,6 +13,8 @@ public class Alumno {
     @Lob
     @Column
     private byte[] dniFrente;
+    @Lob
+    @Column
     private byte[] dniFondo;
     @Column
     private String nroTramite;

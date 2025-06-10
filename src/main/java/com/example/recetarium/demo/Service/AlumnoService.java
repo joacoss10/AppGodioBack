@@ -44,11 +44,11 @@ public class AlumnoService {
         medioDePago.setNombreTitular(requestDto.getTitular());
         medioDePago.setNumTarjeta(requestDto.getNumeroTarjeta());
         medioDePago.setVencimiento(requestDto.getVencimiento());
-        medioDePago.setCuentaCorriente(cuentaCorriente);
+        //medioDePago.setCuentaCorriente(cuentaCorriente);
 
         usuario.get().setAlumno(alumno);
         usuarioRepository.save(usuario.get());
-        cuentaCorrienteService.guardarCuentaCorriente(cuentaCorriente);
+        //cuentaCorrienteService.guardarCuentaCorriente(cuentaCorriente);
         medioDePagoService.guardarMedioDePago(medioDePago);
     }
 
