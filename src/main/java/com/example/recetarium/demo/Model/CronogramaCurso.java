@@ -28,7 +28,4 @@ public class CronogramaCurso {
 
     @OneToMany(mappedBy ="cronogramaCurso",cascade = CascadeType.ALL)
     private ArrayList<AsistenciaCurso> asistenciaCursos;
-
-
-
 }
