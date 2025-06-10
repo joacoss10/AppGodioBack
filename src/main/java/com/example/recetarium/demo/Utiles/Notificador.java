@@ -26,12 +26,12 @@ public class Notificador {
         mensaje.setText("El codigo de verificacion de su cuenta es: "+codigoVerificacioService.obtenerCodigo(id));
         mailSender.send(mensaje);
     }
-
+    @Async
     public void enviarMailCodigoRecupero (String mailUsuario,int codigo){
         SimpleMailMessage mensaje=new SimpleMailMessage();
         mensaje.setTo(mailUsuario);
         mensaje.setSubject("CODIGO DE RECUPERO DE CUENTA");
-        mensaje.setText("El codigo de recupeo de su cuenta es: "+ codigo);
+        mensaje.setText("El codigo de recupero de su cuenta es: "+ codigo);
         mailSender.send(mensaje);
     }
     @Async

@@ -8,5 +8,6 @@ import java.util.Optional;
 public interface CodigoRecuperoRepository extends JpaRepository<CodigoRecupero,Long> {
     Optional<CodigoRecupero> findByUsuario_IdUsuario(Long idUsuario);
     Optional<CodigoRecupero> findByCodigo(int codigo);
+    void deleteByUsuario_IdUsuario(Long idUsuario);
 
 }
