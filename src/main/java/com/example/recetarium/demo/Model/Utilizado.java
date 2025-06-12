@@ -23,4 +23,49 @@ public class Utilizado {
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name="ingrediente",referencedColumnName = "idIngrediente")
     private Ingrediente ingrediente;
+
+    public void setCantidad(int cantidad) {
+        this.cantidad = cantidad;
+    }
+
+    public void setObservaciones(String observaciones) {
+        this.observaciones = observaciones;
+    }
+
+    public Long getIdUtilizado() {
+        return idUtilizado;
+    }
+
+    public int getCantidad() {
+        return cantidad;
+    }
+
+    public String getObservaciones() {
+        return observaciones;
+    }
+
+    public Receta getReceta() {
+        return receta;
+    }
+
+    public Unidad getUnidad() {
+        return unidad;
+    }
+
+    public Ingrediente getIngrediente() {
+        return ingrediente;
+    }
+
+    public void setReceta(Receta receta) {
+        this.receta = receta;
+    }
+
+    public void setUnidad(Unidad unidad) {
+        this.unidad = unidad;
+    }
+
+    public void setIngrediente(Ingrediente ingrediente) {
+        this.ingrediente = ingrediente;
+    }
+
 }

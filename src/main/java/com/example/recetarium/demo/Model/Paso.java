@@ -16,7 +16,7 @@ public class Paso {
     @JoinColumn(name = "Receta",referencedColumnName = "idReceta")
     private Receta receta;
     @OneToMany(mappedBy = "paso",cascade = CascadeType.ALL)
-    private ArrayList<Multimedia> multimedias;
+    private Multimedia multimedias;
 
     public void setIdPaso(Long idPaso) {
         this.idPaso = idPaso;
@@ -34,7 +34,7 @@ public class Paso {
         this.receta = receta;
     }
 
-    public void setMultimedias(ArrayList<Multimedia> multimedias) {
+    public void setMultimedias(Multimedia multimedias) {
         this.multimedias = multimedias;
     }
 
@@ -54,7 +54,7 @@ public class Paso {
         return receta;
     }
 
-    public ArrayList<Multimedia> getMultimedias() {
+    public Multimedia getMultimedias() {
         return multimedias;
     }
 }

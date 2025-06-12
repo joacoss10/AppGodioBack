@@ -1,5 +1,6 @@
 package com.example.recetarium.demo.Model;
 
+import com.example.recetarium.demo.Model.Enums.EstadoReceta;
 import jakarta.persistence.*;
 
 import java.lang.reflect.Array;
@@ -18,21 +19,28 @@ public class Receta {
     private String porciones;
     private Date fechaCreacion;
     private int cantidadPersonas;
+    //Enum con estado de la receta
+    @Enumerated(EnumType.STRING)
+    private EstadoReceta estado = EstadoReceta.En_Espera;
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn (name="Autor",referencedColumnName="idUsuario")
     private Usuario usuario;
 
     @OneToMany(mappedBy = "receta", cascade = CascadeType.ALL)
     private ArrayList<Calificacion> calificacion;
-
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn (name="tipoReceta",referencedColumnName="idTipo")
-    private tipoReceta tipoReceta;
     @OneToMany(mappedBy = "receta", cascade = CascadeType.ALL)
     private ArrayList<FotoReceta> fotoReceta;
 
     @OneToMany(mappedBy = "receta", cascade = CascadeType.ALL)
     private List<Paso> paso;
+
+    public EstadoReceta getEstado() {
+        return estado;
+    }
+
+    public void setEstado(EstadoReceta estado) {
+        this.estado = estado;
+    }
 
     public void setFotoRecetas(ArrayList<FotoReceta> fotoRecetas) {
         this.fotoReceta = fotoRecetas;
@@ -61,17 +69,10 @@ public class Receta {
         this.calificacion = calificacions;
     }
 
-    public void setTipoReceta(com.example.recetarium.demo.Model.tipoReceta tipoReceta) {
-        this.tipoReceta = tipoReceta;
-    }
-
     public ArrayList<Calificacion> getCalificacions() {
         return calificacion;
     }
 
-    public com.example.recetarium.demo.Model.tipoReceta getTipoReceta() {
-        return tipoReceta;
-    }
 
     public void setIdReceta(Long idReceta) {
         this.idReceta = idReceta;
