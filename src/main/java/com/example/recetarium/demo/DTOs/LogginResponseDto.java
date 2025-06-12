@@ -4,7 +4,15 @@ public class LogginResponseDto {
     private String token;
     private int codigo;
     private boolean alumno;
+    private Long id;
 
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     public void setCodigo(int codigo) {
         this.codigo = codigo;

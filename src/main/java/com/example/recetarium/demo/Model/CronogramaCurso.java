@@ -1,34 +1,105 @@
 package com.example.recetarium.demo.Model;
 
+import com.example.recetarium.demo.Model.Enums.*;
 import jakarta.persistence.*;
-
-import java.util.ArrayList;
-import java.util.Date;
+import java.time.LocalDate;
 
 @Entity
 public class CronogramaCurso {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idCronograma;
 
-    @Column
-    private String diaSemana;
-    private Date fechaInicio;
-    private Date fechaFin;
-    private int vacantesDisponibles;
-
-
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name="sede",referencedColumnName = "idSede")
+    @ManyToOne
+    @JoinColumn(name = "idCurso")
+    private Curso curso;
+    @ManyToOne
+    @JoinColumn(name="idSede")
     private Sede sede;
 
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name="curso",referencedColumnName = "idCurso")
-    private Curso curso;
 
-    @OneToMany(mappedBy ="cronogramaCurso",cascade = CascadeType.ALL)
-    private ArrayList<AsistenciaCurso> asistenciaCursos;
+    @Column
+    private int vacantes;
+
+    @Enumerated(EnumType.STRING)
+    private DiaDeSemana dia;
+
+    private int clasesDictadas;
+    private LocalDate fechaInicio;
+    private LocalDate fechaFin;
+
+    public Sede getSede() {
+        return sede;
+    }
+
+    public void setSede(Sede sede) {
+        this.sede = sede;
+    }
+
+    public Long getId() {
+        return idCronograma;
+    }
+
+    public Curso getCurso() {
+        return curso;
+    }
+
+    public Long getIdCronograma() {
+        return idCronograma;
+    }
+
+    public int getClasesDictadas() {
+        return clasesDictadas;
+    }
+
+    public void setClasesDictadas(int clasesDictadas) {
+        this.clasesDictadas = clasesDictadas;
+    }
+
+    public void setIdCronograma(Long idCronograma) {
+        this.idCronograma = idCronograma;
+    }
+
+    public void setVacantes(int vacantes) {
+        this.vacantes = vacantes;
+    }
+
+    public int getVacantes() {
+        return vacantes;
+    }
+
+    public DiaDeSemana getDia() {
+        return dia;
+    }
+
+    public LocalDate getFechaInicio() {
+        return fechaInicio;
+    }
+
+    public LocalDate getFechaFin() {
+        return fechaFin;
+    }
+
+    public void setId(Long id) {
+        this.idCronograma = id;
+    }
+
+    public void setCurso(Curso curso) {
+        this.curso = curso;
+    }
 
 
 
+    public void setDia(DiaDeSemana dia) {
+        this.dia = dia;
+    }
+
+    public void setFechaInicio(LocalDate fechaInicio) {
+        this.fechaInicio = fechaInicio;
+    }
+
+    public void setFechaFin(LocalDate fechaFin) {
+        this.fechaFin = fechaFin;
+    }
 }

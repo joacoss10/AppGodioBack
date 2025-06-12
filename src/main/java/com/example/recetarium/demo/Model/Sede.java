@@ -5,6 +5,7 @@ import com.example.recetarium.demo.Model.Enums.*;
 import jakarta.persistence.*;
 
 import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 public class Sede {
@@ -19,11 +20,7 @@ public class Sede {
     private String mailSede;
     private String whatsApp;
     private float bonificacionCurso;
-    private TipoPromocion tipoPromocion;//EJ:2x1
-
-
-    @OneToMany(mappedBy = "sede",cascade = CascadeType.ALL)
-    private ArrayList<CronogramaCurso> cronogramaCurso;
+    private TipoPromocion tipoPromocion;
 
     public void setIdSede(Long idSede) {
         this.idSede = idSede;
@@ -88,6 +85,10 @@ public class Sede {
 
     public TipoPromocion getTipoPromocion() {
         return tipoPromocion;
+    }
+
+    public void setBonificacionCurso(float bonificacionCurso) {
+        this.bonificacionCurso = bonificacionCurso;
     }
 
 

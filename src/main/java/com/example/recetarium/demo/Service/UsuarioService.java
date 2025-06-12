@@ -5,6 +5,7 @@ import com.example.recetarium.demo.Model.CodigoDeVerificacion;
 import com.example.recetarium.demo.Model.Usuario;
 import com.example.recetarium.demo.Repository.UsuarioRepository;
 import com.example.recetarium.demo.Utiles.Notificador;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
@@ -89,6 +90,7 @@ public class UsuarioService {
 
             }
         }
+        @Transactional
         public LogginResponseDto credencialesCorrectas(LogginRequestDto request){//request es el mail o alias
             LogginResponseDto responseDto=new LogginResponseDto();
             Optional<Usuario> user=repository.findByMailOrAlias(request.aliasOMail,request.aliasOMail);
@@ -97,6 +99,7 @@ public class UsuarioService {
             }else{
                 if(user.get().getContrasenia().equals(request.contrasenia)){
                     responseDto.setCodigo(200);//Todo Ok la contrasnia es esa
+                    responseDto.setId(user.get().getIdUsuario());
                     if(user.get().getAlumno()!=null){
                         responseDto.setAlumno(true);
                     }else {
