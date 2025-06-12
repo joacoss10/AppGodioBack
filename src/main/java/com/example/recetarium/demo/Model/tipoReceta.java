@@ -1,42 +1,44 @@
 package com.example.recetarium.demo.Model;
 
 import jakarta.persistence.*;
-
-import java.util.ArrayList;
+import java.util.List;
 
 @Entity
-public class tipoReceta {
+public class TipoReceta {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idTipo;
 
-    @Column
-    private String descripcion;
+    @Column(nullable = false)
+    private String nombre;
 
-    @OneToMany(mappedBy = "tipoReceta",cascade = CascadeType.ALL)
-    private ArrayList<Receta> receta;
+    @OneToMany(mappedBy = "tipoReceta", cascade = CascadeType.ALL)
+    private List<Receta> recetas;
 
-    public void setIdTipo(Long idTipo) {
-        this.idTipo = idTipo;
-    }
-
-    public void setDescripcion(String descripcion) {
-        this.descripcion = descripcion;
-    }
-
-    public void setReceta(ArrayList<Receta> receta) {
-        this.receta = receta;
-    }
+    // Getters y setters
 
     public Long getIdTipo() {
         return idTipo;
     }
 
-    public String getDescripcion() {
-        return descripcion;
+    public void setIdTipo(Long idTipo) {
+        this.idTipo = idTipo;
     }
 
-    public ArrayList<Receta> getReceta() {
-        return receta;
+    public String getNombre() {
+        return nombre;
+    }
+
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
+
+    public List<Receta> getRecetas() {
+        return recetas;
+    }
+
+    public void setRecetas(List<Receta> recetas) {
+        this.recetas = recetas;
     }
 }

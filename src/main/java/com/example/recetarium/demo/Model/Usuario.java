@@ -166,4 +166,24 @@ public class Usuario {
     public void setCodigos(List<CodigoRecupero> codigos) {
         this.codigos = codigos;
     }
+
+    public Long getIdReceta() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'getIdReceta'");
+    }
+
+    public String getDescripcionReceta() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'getDescripcionReceta'");
+    }
+
+    public String getNombreReceta() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'getNombreReceta'");
+    }
+
+    public byte[] getImagen() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'getImagen'");
+    }
 }

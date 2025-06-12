@@ -23,4 +23,19 @@ public class Utilizado {
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name="ingrediente",referencedColumnName = "idIngrediente")
     private Ingrediente ingrediente;
+
+    public void setIngrediente(Ingrediente ingrediente2) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'setIngrediente'");
+    }
+
+    public void setCantidad(String cantidad2) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'setCantidad'");
+    }
+
+    public void setReceta(Receta receta2) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'setReceta'");
+    }
 }
