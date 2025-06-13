@@ -13,10 +13,6 @@ public class CuentaCorriente {
     @Column
     private float saldo;
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name="Alumno",referencedColumnName = "idAlumno")
-    private Alumno alumno;
-
     @OneToMany(mappedBy = "cuentaCorriente", cascade = CascadeType.ALL)
     private List<MedioDePago> medioDePago;
 
@@ -28,9 +24,6 @@ public class CuentaCorriente {
         this.saldo = saldo;
     }
 
-    public void setAlumno(Alumno alumno) {
-        this.alumno = alumno;
-    }
 
     public void setMedioDePago(List<MedioDePago> medioDePago) {
         this.medioDePago = medioDePago;
@@ -44,9 +37,6 @@ public class CuentaCorriente {
         return saldo;
     }
 
-    public Alumno getAlumno() {
-        return alumno;
-    }
 
     public List<MedioDePago> getMedioDePago() {
         return medioDePago;

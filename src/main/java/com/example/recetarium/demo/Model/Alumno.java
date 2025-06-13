@@ -15,12 +15,10 @@ public class Alumno {
     private byte[] dniFrente;
     private byte[] dniFondo;
     @Column
-    private int nroTramite;
+    private String nroTramite;
 
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name="usuario",referencedColumnName = "idUsuario")
-    private Usuario usuario;
+
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name="cuentaCorriente",referencedColumnName = "idCuentaCorriente")
     private CuentaCorriente cuentaCorriente;
@@ -40,13 +38,11 @@ public class Alumno {
         return dniFondo;
     }
 
-    public int getNroTramite() {
+    public String getNroTramite() {
         return nroTramite;
     }
 
-    public Usuario getUsuario() {
-        return usuario;
-    }
+
 
     public void setCuentaCorriente(CuentaCorriente cuentaCorriente) {
         this.cuentaCorriente = cuentaCorriente;
@@ -76,13 +72,11 @@ public class Alumno {
         this.dniFondo = dniFondo;
     }
 
-    public void setNroTramite(int nroTramite) {
+    public void setNroTramite(String nroTramite) {
         this.nroTramite = nroTramite;
     }
 
-    public void setUsuario(Usuario usuario) {
-        this.usuario = usuario;
-    }
+
 
 
 }

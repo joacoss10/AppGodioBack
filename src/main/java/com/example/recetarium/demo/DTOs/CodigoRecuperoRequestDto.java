@@ -1,7 +1,7 @@
 package com.example.recetarium.demo.DTOs;
 
 public class CodigoRecuperoRequestDto {
-    public String aliasOMail;
+    private String aliasOMail;
     private int codigo;
 
     public CodigoRecuperoRequestDto(String aliasOMail, int codigo){

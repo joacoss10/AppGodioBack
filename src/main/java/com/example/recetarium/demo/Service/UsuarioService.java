@@ -33,7 +33,6 @@ public class UsuarioService {
 
             //CREACION DEL CODIGO DE VERIFICACION DE LA CUENTA Y LO MACHEA CON USUARIO Y VICEVERSA
             CodigoDeVerificacion codigo=codigoVerificacioService.crearCodigoDeVerificacionCuenta(usuario);
-            usuario.setCodVerificacion(codigo);
             notificador.enviarMailCodigoVerificacion(requestDto.getMail(),requestDto.getAlias());//MANDA EL MAIL
 
             repository.save(usuario);
@@ -71,9 +70,6 @@ public class UsuarioService {
         public void cambiarEstadoVerificacion ( int codigo, Long idUsuario){
             Optional<Usuario> usuario = repository.findById(idUsuario);
             usuario.get().setEstadoVerificacion(codigo);
-            if (codigo == 1) {
-                usuario.get().setHabilitado(true);
-            }
             repository.save(usuario.get());
         }
         public Long getId (String mail, String alias){
@@ -114,8 +110,7 @@ public class UsuarioService {
             return responseDto;
         }
 
-        public Optional<Usuario> aliasOmailRecupero(CodigoRecuperoRequestDto aliasOmail){
-            Optional<Usuario> user=repository.findByMailOrAlias(aliasOmail.getAliasOMail(),aliasOmail.getAliasOMail());
-            return user;
+        public Optional<Usuario> getUsuarioPorMailOAlias(String alias,String mail){
+            return repository.findByMailOrAlias(alias,mail);
         }
     }

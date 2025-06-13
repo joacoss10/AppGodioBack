@@ -12,7 +12,7 @@ public class MedioDePago {
     @Column
     private String numTarjeta;
     private String nombreTitular;
-    private Date vencimiento;
+    private String vencimiento;
     private int codSeguridad;
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn (name = "CuentaCorriente", referencedColumnName = "idCuentaCorriente")
@@ -30,7 +30,7 @@ public class MedioDePago {
         this.nombreTitular = nombreTitular;
     }
 
-    public void setVencimiento(Date vencimiento) {
+    public void setVencimiento(String vencimiento) {
         this.vencimiento = vencimiento;
     }
 
@@ -50,11 +50,15 @@ public class MedioDePago {
         return nombreTitular;
     }
 
-    public Date getVencimiento() {
+    public String getVencimiento() {
         return vencimiento;
     }
 
     public int getCodSeguridad() {
         return codSeguridad;
+    }
+
+    public void setCuentaCorriente(CuentaCorriente cuentaCorriente) {
+        this.cuentaCorriente = cuentaCorriente;
     }
 }
