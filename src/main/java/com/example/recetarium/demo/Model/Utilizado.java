@@ -12,15 +12,15 @@ public class Utilizado {
     private int cantidad;
     private String observaciones;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne//(cascade = CascadeType.ALL)
     @JoinColumn(name="receta",referencedColumnName = "idReceta")
     private Receta receta;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne//(cascade = CascadeType.ALL)
     @JoinColumn(name="unidad",referencedColumnName = "idUnidad")
     private Unidad unidad;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne//(cascade = CascadeType.ALL)
     @JoinColumn(name="ingrediente",referencedColumnName = "idIngrediente")
     private Ingrediente ingrediente;
 

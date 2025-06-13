@@ -9,6 +9,7 @@ import com.example.recetarium.demo.Model.Enums.EstadoReceta;
 import com.example.recetarium.demo.Repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
@@ -33,6 +34,7 @@ public class RecetaService {
     @Autowired
     private UtilizadoRepository repoUtilizado;
 
+    @Transactional
     public RecetaResponseDto crearReceta(RecetaRequestDto dto){
         RecetaResponseDto response=new RecetaResponseDto();
         Optional<Usuario> usuarioOptional=repoUsuario.findByMailOrAlias(dto.getAliasUsuario(), dto.getAliasUsuario());
@@ -94,9 +96,24 @@ public class RecetaService {
                 usado.setUnidad(unidadOp.get());
                 repoUtilizado.save(usado);
             }
-            else{//NO EXISTE ESE INGREDIENTE? O UNIDAD?, supongo que la unidad no le puede pifiar porque va a ser una lista desplegable pero con ingrediente ni idea cual va a ser el lore
-                response.setCodigo(401);
-                return response;
+            else{
+                if(IngredienteOp.isEmpty()&& unidadOp.isPresent()){//EL INGREDIENTE ES NUEVO
+                    Ingrediente ingrediente=new Ingrediente();
+                    ingrediente.setNombre(ingredienteDto.getNombreIngrediente());
+                    repoIngrediente.save(ingrediente);
+                    //
+                    Utilizado usado=new Utilizado();
+                    usado.setCantidad(ingredienteDto.getCantidad());
+                    usado.setObservaciones(ingredienteDto.getObservacion());
+                    usado.setReceta(receta);
+                    usado.setIngrediente(ingrediente);
+                    usado.setUnidad(unidadOp.get());
+                    repoUtilizado.save(usado);
+                }
+                else{//NO EXISTE UNIDAD, no deberia de pasar porque se la verificacion la hace el front
+                    response.setCodigo(401);
+                    return response;
+                }
             }
         }
         response.setCodigo(200);

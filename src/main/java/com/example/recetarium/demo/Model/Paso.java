@@ -12,10 +12,10 @@ public class Paso {
     @Column
     private String texto;
     private int numeroDePaso;
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne//(cascade = CascadeType.ALL)
     @JoinColumn(name = "Receta",referencedColumnName = "idReceta")
     private Receta receta;
-    @OneToMany(mappedBy = "paso",cascade = CascadeType.ALL)
+    @OneToOne(mappedBy = "paso",orphanRemoval = true)//si borro paso se borra automaticamente la multimedia asociada
     private Multimedia multimedias;
 
     public void setIdPaso(Long idPaso) {

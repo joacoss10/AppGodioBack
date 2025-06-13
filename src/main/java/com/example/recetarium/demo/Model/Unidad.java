@@ -13,12 +13,12 @@ public class Unidad {
     @Column
     private String descripcion;
 
-    @OneToMany(mappedBy ="unidad",cascade = CascadeType.ALL)
+    @OneToMany(mappedBy ="unidad")
     private ArrayList<Utilizado> utilizado;
 
-    @OneToMany(mappedBy = "unidadDestino",cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "unidadDestino")
     private ArrayList<Conversion> conversionDestino;
-    @OneToMany(mappedBy = "unidadOrigen", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "unidadOrigen")
     private ArrayList<Conversion> conversionOrigen;
 
     public void setIdUnidad(Long idUnidad) {

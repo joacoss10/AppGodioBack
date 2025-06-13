@@ -27,7 +27,7 @@ public class Usuario {
     @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL)
     private List<CodigoRecupero> codigos;
     //JOIN CON LA TABLA QUE CREA LAS RECETAS
-    @OneToMany(mappedBy ="usuario",cascade = CascadeType.ALL)
+    @OneToMany(mappedBy ="usuario")
     private List<Receta> recetasCreadas;
     //JOIN CON LA TABLA DE RECETAS FAVS
     @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL)

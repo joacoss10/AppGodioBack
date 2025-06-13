@@ -38,7 +38,7 @@ public class Multimedia {
         this.paso = paso;
     }
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @OneToOne//(cascade = CascadeType.ALL)
     @JoinColumn(name = "Paso",referencedColumnName = "idPaso")
     private Paso paso;
 

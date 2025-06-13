@@ -43,11 +43,11 @@ public class Conversion {
     @Column
     private float factorConversiones;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     @JoinColumn(name = "UnidadOrigen",referencedColumnName = "idUnidad" )
     private Unidad unidadOrigen;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     @JoinColumn(name = "UnidadDestino",referencedColumnName = "idUnidad" )
     private Unidad unidadDestino;
 

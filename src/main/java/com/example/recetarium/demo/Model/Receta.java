@@ -22,16 +22,16 @@ public class Receta {
     //Enum con estado de la receta
     @Enumerated(EnumType.STRING)
     private EstadoReceta estado = EstadoReceta.En_Espera;
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne//(cascade = CascadeType.ALL)
     @JoinColumn (name="Autor",referencedColumnName="idUsuario")
     private Usuario usuario;
 
-    @OneToMany(mappedBy = "receta", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "receta",orphanRemoval = true)
     private ArrayList<Calificacion> calificacion;
-    @OneToMany(mappedBy = "receta", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "receta",orphanRemoval = true)
     private ArrayList<FotoReceta> fotoReceta;
 
-    @OneToMany(mappedBy = "receta", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "receta",orphanRemoval = true)
     private List<Paso> paso;
 
     public EstadoReceta getEstado() {
@@ -58,7 +58,7 @@ public class Receta {
         return utilizado;
     }
 
-    @OneToMany(mappedBy = "receta",cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "receta",orphanRemoval = true)
     private ArrayList<Utilizado> utilizado;
 
     @Lob

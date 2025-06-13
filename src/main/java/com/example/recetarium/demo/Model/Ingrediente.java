@@ -38,7 +38,7 @@ public class Ingrediente {
         return utilizados;
     }
 
-    @OneToMany(mappedBy = "ingrediente",cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "ingrediente")
     private ArrayList<Utilizado> utilizados;
 
 

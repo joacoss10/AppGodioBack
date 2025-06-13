@@ -13,7 +13,7 @@ public class FotoReceta {
     @Column
     private byte[] foto;
     private boolean principal;
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne
     @JoinColumn(name = "Receta",referencedColumnName = "idReceta")
     private Receta receta;
 
