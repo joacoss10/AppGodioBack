@@ -37,6 +37,14 @@ public class RecetaService {
     @Transactional
     public RecetaResponseDto crearReceta(RecetaRequestDto dto){
         RecetaResponseDto response=new RecetaResponseDto();
+        for (IngredienteRequestDto ingredienteDto : dto.getIngredientesUsados()) {
+            Optional<Unidad> unidadOp = repoUnidad.findByDescripcion(ingredienteDto.getUnidad());
+            if (unidadOp.isEmpty()) {//unidad no encontrada, no deberia de pasar pero por las dudas
+                response.setCodigo(401);
+                return response;
+            }
+        }
+        //coca
         Optional<Usuario> usuarioOptional=repoUsuario.findByMailOrAlias(dto.getAliasUsuario(), dto.getAliasUsuario());
         if(usuarioOptional.isEmpty()){//Usuario no encontrado, no deberia de pasar pero por las dudas
             response.setCodigo(400);
@@ -87,7 +95,7 @@ public class RecetaService {
             Optional<Ingrediente>IngredienteOp=repoIngrediente.findByNombre(ingredienteDto.getNombreIngrediente());
             Optional<Unidad> unidadOp=repoUnidad.findByDescripcion(ingredienteDto.getUnidad());
 
-            if(IngredienteOp.isPresent()&& unidadOp.isPresent()){//UNIDAD DEBE ESTAR PRESENTE SI O SI, con ingredientes hay que ver el lore
+            if(IngredienteOp.isPresent()){//ingrediente existente
                 Utilizado usado=new Utilizado();
                 usado.setCantidad(ingredienteDto.getCantidad());
                 usado.setObservaciones(ingredienteDto.getObservacion());
@@ -96,8 +104,7 @@ public class RecetaService {
                 usado.setUnidad(unidadOp.get());
                 repoUtilizado.save(usado);
             }
-            else{
-                if(IngredienteOp.isEmpty()&& unidadOp.isPresent()){//EL INGREDIENTE ES NUEVO
+            else{//EL INGREDIENTE ES NUEVO
                     Ingrediente ingrediente=new Ingrediente();
                     ingrediente.setNombre(ingredienteDto.getNombreIngrediente());
                     repoIngrediente.save(ingrediente);
@@ -110,12 +117,7 @@ public class RecetaService {
                     usado.setUnidad(unidadOp.get());
                     repoUtilizado.save(usado);
                 }
-                else{//NO EXISTE UNIDAD, no deberia de pasar porque se la verificacion la hace el front
-                    response.setCodigo(401);
-                    return response;
-                }
             }
-        }
         response.setCodigo(200);
         return response;
     }
