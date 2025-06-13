@@ -3,7 +3,7 @@ package com.example.recetarium.demo.DTOs;
 public class LogginResponseDto {
     private String token;
     private int codigo;
-    private boolean alumno;
+    private Long alumno;
     private Long id;
 
     public Long getId() {
@@ -22,11 +22,11 @@ public class LogginResponseDto {
         return codigo;
     }
 
-    public boolean isAlumno() {
+    public Long getAlumno() {
         return alumno;
     }
 
-    public void setAlumno(boolean alumno) {
+    public void setAlumno(Long alumno) {
         this.alumno = alumno;
     }
 

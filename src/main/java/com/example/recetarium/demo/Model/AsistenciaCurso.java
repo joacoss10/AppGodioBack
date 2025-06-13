@@ -3,7 +3,6 @@ package com.example.recetarium.demo.Model;
 
 import jakarta.persistence.*;
 
-import java.util.Date;
 
 @Entity
 @Table(

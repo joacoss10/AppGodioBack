@@ -1,8 +1,6 @@
 package com.example.recetarium.demo.Service;
 
-import com.example.recetarium.demo.DTOs.ContenidoCursoRespondDto;
-import com.example.recetarium.demo.DTOs.CursoPreviewRespondDto;
-import com.example.recetarium.demo.DTOs.InfoGeneralCursoRespondDto;
+import com.example.recetarium.demo.DTOs.*;
 import com.example.recetarium.demo.Model.CronogramaCurso;
 import com.example.recetarium.demo.Model.Curso;
 import com.example.recetarium.demo.Model.Enums.ModalidadClase;
@@ -23,6 +21,8 @@ public class CursoService {
     CronogramaCursoRepository cronogramaCursoRepository;
     @Autowired
     CursoRepository cursoRepository;
+    @Autowired
+    AsistenciaACursoService asistenciaACursoService;
 
 
 
@@ -33,15 +33,16 @@ public class CursoService {
     private CursoPreviewRespondDto mapToPreviewDto(CronogramaCurso cronogramaCurso) {
         Curso curso=cronogramaCurso.getCurso();
         return new CursoPreviewRespondDto(
-                curso.getIdCurso(),
+                cronogramaCurso.getId(),
                 curso.getNombreCurso(),
                 curso.getDescripcion(),
-                cronogramaCurso.getSede().getIdSede()
+                curso.getIdCurso()
+
         );
     }
-    public InfoGeneralCursoRespondDto obtenerInfoGeneral(Long idCurso, Long idSede){
+    public InfoGeneralCursoRespondDto obtenerInfoGeneral(Long idCronograma){
         InfoGeneralCursoRespondDto respondDto=new InfoGeneralCursoRespondDto();
-        Optional<CronogramaCurso> cronograma=cronogramaCursoRepository.findByCurso_IdCursoAndSede_IdSede(idCurso,idSede);
+        Optional<CronogramaCurso> cronograma=cronogramaCursoRepository.findById(idCronograma);
         Curso curso=cronograma.get().getCurso();
         Sede sede=cronograma.get().getSede();
 
@@ -70,10 +71,37 @@ public class CursoService {
 
         return respondDto;
     }
+    public MisCursosInformacionRespondDto obtenerInformacionMiCurso(Long idAlumno,Long idCronograma){
+        MisCursosInformacionRespondDto respond=new MisCursosInformacionRespondDto();
+        Optional<CronogramaCurso> cronograma=cronogramaCursoRepository.findById(idCronograma);
+
+        Curso curso=cronograma.get().getCurso();
+        int asistencia=asistenciaACursoService.getAsistencia(idAlumno,idCronograma);
+        int clasesDictadas=cronograma.get().getClasesDictadas();
+        int porcentaje=100;
+        if(asistencia!=0){
+            porcentaje= clasesDictadas/(asistencia*100);
+        }
+
+        respond.setIdCurso(curso.getIdCurso());
+        respond.setAsistencias(asistencia);
+        respond.setClasesDictadas(clasesDictadas);
+        respond.setPorcentaje(porcentaje);
+        respond.setDescripcion(curso.getDescripcion());
+        respond.setNombreDelCurso(curso.getNombreCurso());
+
+        return respond;
+    }
     public ContenidoCursoRespondDto obtenerContenidoCurso(Long idCurso){
         ContenidoCursoRespondDto respond=new ContenidoCursoRespondDto();
         Optional<Curso> curso=cursoRepository.findById(idCurso);
         respond.setTemas(curso.get().getContenidos());
+        return respond;
+    }
+    public MisCursosPracticasRespondDto obtenerRequerimientosCurso(Long idCurso){
+        MisCursosPracticasRespondDto respond=new MisCursosPracticasRespondDto();
+        Optional<Curso>curso=cursoRepository.findById(idCurso);
+        respond.setRecomendaciones(curso.get().getRequerimientos());
         return respond;
     }
 }

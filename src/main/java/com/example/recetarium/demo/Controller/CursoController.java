@@ -25,8 +25,8 @@ public class CursoController {
         return ResponseEntity.ok(previews);
     }
     @GetMapping("/infogeneral")
-    public InfoGeneralCursoRespondDto getInformacionGeneral(@RequestParam Long idCurso,@RequestParam Long idSede){
-      return cursoService.obtenerInfoGeneral(idCurso,idSede);
+    public InfoGeneralCursoRespondDto getInformacionGeneral(@RequestParam Long idCronograma){
+      return cursoService.obtenerInfoGeneral(idCronograma);
     }
     @GetMapping("/contenidos")
     public ContenidoCursoRespondDto getContenido(@RequestParam Long idCurso){

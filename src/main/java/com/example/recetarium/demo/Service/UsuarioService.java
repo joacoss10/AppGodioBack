@@ -100,10 +100,10 @@ public class UsuarioService {
                 if(user.get().getContrasenia().equals(request.contrasenia)){
                     responseDto.setCodigo(200);//Todo Ok la contrasnia es esa
                     responseDto.setId(user.get().getIdUsuario());
-                    if(user.get().getAlumno()!=null){
-                        responseDto.setAlumno(true);
+                    if(user.get().getAlumno()==null){
+                        responseDto.setAlumno(null);
                     }else {
-                        responseDto.setAlumno(false);
+                        responseDto.setAlumno(user.get().getAlumno().getIdAlumno());
                     }
                 }
                 else{

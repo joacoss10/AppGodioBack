@@ -12,7 +12,7 @@ import java.util.Optional;
 
 @Repository
 public interface CronogramaCursoRepository extends JpaRepository<CronogramaCurso, Long> {
-    Optional<CronogramaCurso> findByCurso_IdCursoAndSede_IdSede(Long idCurso, Long idSede);
+
     @Query("""
     SELECT cc FROM CronogramaCurso cc
     WHERE cc.vacantes > 0 AND cc.fechaInicio > CURRENT_DATE
