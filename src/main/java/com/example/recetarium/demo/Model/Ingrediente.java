@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 public class Ingrediente {
@@ -13,6 +14,10 @@ public class Ingrediente {
 
     @Column
     private String nombre;
+    @OneToMany(mappedBy = "ingrediente")
+    private List<Utilizado> utilizados= new ArrayList<>();
+    public Ingrediente() {}
+
 
     public void setIdIngrediente(Long idIngrediente) {
         this.idIngrediente = idIngrediente;
@@ -22,7 +27,7 @@ public class Ingrediente {
         this.nombre = nombre;
     }
 
-    public void setUtilizados(ArrayList<Utilizado> utilizados) {
+    public void setUtilizados(List<Utilizado> utilizados) {
         this.utilizados = utilizados;
     }
 
@@ -34,12 +39,10 @@ public class Ingrediente {
         return nombre;
     }
 
-    public ArrayList<Utilizado> getUtilizados() {
+    public List<Utilizado> getUtilizados() {
         return utilizados;
     }
 
-    @OneToMany(mappedBy = "ingrediente")
-    private ArrayList<Utilizado> utilizados;
 
 
 }

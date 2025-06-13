@@ -4,6 +4,22 @@ import jakarta.persistence.*;
 
 @Entity
 public class Conversion {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long idConversion;
+
+    @Column
+    private float factorConversiones;
+
+    @ManyToOne
+    @JoinColumn(name = "UnidadOrigen",referencedColumnName = "idUnidad" )
+    private Unidad unidadOrigen;
+
+    @ManyToOne
+    @JoinColumn(name = "UnidadDestino",referencedColumnName = "idUnidad" )
+    private Unidad unidadDestino;
+
+    public Conversion() {}
     public void setIdConversion(Long idConversion) {
         this.idConversion = idConversion;
     }
@@ -35,21 +51,6 @@ public class Conversion {
     public Unidad getUnidadDestino() {
         return unidadDestino;
     }
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long idConversion;
-
-    @Column
-    private float factorConversiones;
-
-    @ManyToOne
-    @JoinColumn(name = "UnidadOrigen",referencedColumnName = "idUnidad" )
-    private Unidad unidadOrigen;
-
-    @ManyToOne
-    @JoinColumn(name = "UnidadDestino",referencedColumnName = "idUnidad" )
-    private Unidad unidadDestino;
 
 
 

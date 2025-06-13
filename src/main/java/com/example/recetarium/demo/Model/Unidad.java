@@ -3,6 +3,7 @@ package com.example.recetarium.demo.Model;
 import jakarta.persistence.*;
 
 import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 public class Unidad {
@@ -13,13 +14,15 @@ public class Unidad {
     @Column
     private String descripcion;
 
-    @OneToMany(mappedBy ="unidad")
-    private ArrayList<Utilizado> utilizado;
+    @OneToMany(mappedBy = "unidad")
+    private List<Utilizado> utilizado = new ArrayList<>();
 
     @OneToMany(mappedBy = "unidadDestino")
-    private ArrayList<Conversion> conversionDestino;
+    private List<Conversion> conversionDestino = new ArrayList<>();
     @OneToMany(mappedBy = "unidadOrigen")
-    private ArrayList<Conversion> conversionOrigen;
+    private List<Conversion> conversionOrigen = new ArrayList<>();
+
+    public Unidad() {}
 
     public void setIdUnidad(Long idUnidad) {
         this.idUnidad = idUnidad;
@@ -29,11 +32,29 @@ public class Unidad {
         this.descripcion = descripcion;
     }
 
-    public void setUtilizados(ArrayList<Utilizado> utilizados) {
-        this.utilizado = utilizados;
+    public void setUtilizado(List<Utilizado> utilizado) {
+        this.utilizado = utilizado;
     }
 
+    public void setConversionDestino(List<Conversion> conversionDestino) {
+        this.conversionDestino = conversionDestino;
+    }
 
+    public void setConversionOrigen(List<Conversion> conversionOrigen) {
+        this.conversionOrigen = conversionOrigen;
+    }
+
+    public List<Utilizado> getUtilizado() {
+        return utilizado;
+    }
+
+    public List<Conversion> getConversionDestino() {
+        return conversionDestino;
+    }
+
+    public List<Conversion> getConversionOrigen() {
+        return conversionOrigen;
+    }
 
     public Long getIdUnidad() {
         return idUnidad;
@@ -43,9 +64,6 @@ public class Unidad {
         return descripcion;
     }
 
-    public ArrayList<Utilizado> getUtilizados() {
-        return utilizado;
-    }
 
 
 }
