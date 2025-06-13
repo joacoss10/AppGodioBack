@@ -6,6 +6,7 @@ import jakarta.persistence.*;
 
 import java.sql.Time;
 import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 public class Curso {
@@ -16,15 +17,21 @@ public class Curso {
     @Column
     private String descripcion;
     private String nombreCurso;
-    private ArrayList<String> contenidos;
-    private ArrayList<String> requerimientos;
+    @ElementCollection
+    @Column (name="contenido")
+    private List<String> contenidos;
+    @ElementCollection
+    @Column (name="requerimiento")
+    private List<String> requerimientos;
     private int duracion;
     private float precio;
     private ModalidadClase modalidad;
-    private int clasesDictadas;
+
     private Time hora;
+
     @OneToMany(mappedBy = "curso", cascade = CascadeType.ALL)
-    private ArrayList<CronogramaCurso> cronogramaCurso;
+    private List<CronogramaCurso> cronogramaCurso;
+
 
 
     public Long getIdCurso() {
@@ -39,11 +46,11 @@ public class Curso {
         return nombreCurso;
     }
 
-    public ArrayList<String> getContenidos() {
+    public List<String> getContenidos() {
         return contenidos;
     }
 
-    public ArrayList<String> getRequerimientos() {
+    public List<String> getRequerimientos() {
         return requerimientos;
     }
 
@@ -59,15 +66,13 @@ public class Curso {
         return modalidad;
     }
 
-    public int getClasesDictadas() {
-        return clasesDictadas;
-    }
+
 
     public Time getHora() {
         return hora;
     }
 
-    public ArrayList<CronogramaCurso> getCronogramaCurso() {
+    public List<CronogramaCurso> getCronogramaCurso() {
         return cronogramaCurso;
     }
 
@@ -103,15 +108,25 @@ public class Curso {
         this.modalidad = modalidad;
     }
 
-    public void setClasesDictadas(int clasesDictadas) {
-        this.clasesDictadas = clasesDictadas;
-    }
+
 
     public void setHora(Time hora) {
         this.hora = hora;
     }
 
-    public void setCronogramaCurso(ArrayList<CronogramaCurso> cronogramaCurso) {
+    public void setCronogramaCurso(List<CronogramaCurso> cronogramaCurso) {
         this.cronogramaCurso = cronogramaCurso;
     }
+
+
+
+    public void setContenidos(List<String> contenidos) {
+        this.contenidos = contenidos;
+    }
+
+    public void setRequerimientos(List<String> requerimientos) {
+        this.requerimientos = requerimientos;
+    }
+
+
 }

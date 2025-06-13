@@ -3,6 +3,7 @@ package com.example.recetarium.demo.Model;
 import jakarta.persistence.*;
 
 import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 public class Alumno {
@@ -11,8 +12,12 @@ public class Alumno {
     private Long idAlumno;
 
     @Lob
+    @Basic(fetch = FetchType.LAZY)
     @Column
     private byte[] dniFrente;
+    @Lob
+    @Basic(fetch = FetchType.LAZY)
+    @Column
     private byte[] dniFondo;
     @Column
     private String nroTramite;
@@ -24,7 +29,7 @@ public class Alumno {
     private CuentaCorriente cuentaCorriente;
 
     @OneToMany(mappedBy ="alumno",cascade = CascadeType.ALL)
-    private ArrayList<AsistenciaCurso> asistenciaCursos;
+    private List<AsistenciaCurso> asistenciaCursos;
 
     public Long getIdAlumno() {
         return idAlumno;
@@ -48,7 +53,7 @@ public class Alumno {
         this.cuentaCorriente = cuentaCorriente;
     }
 
-    public void setAsistenciaCursos(ArrayList<AsistenciaCurso> asistenciaCursos) {
+    public void setAsistenciaCursos(List<AsistenciaCurso> asistenciaCursos) {
         this.asistenciaCursos = asistenciaCursos;
     }
 
@@ -56,7 +61,7 @@ public class Alumno {
         return cuentaCorriente;
     }
 
-    public ArrayList<AsistenciaCurso> getAsistenciaCursos() {
+    public List<AsistenciaCurso> getAsistenciaCursos() {
         return asistenciaCursos;
     }
 

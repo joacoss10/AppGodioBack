@@ -1,6 +1,7 @@
 package com.example.recetarium.demo.Service;
 
 import com.example.recetarium.demo.DTOs.AlumnoRequestDto;
+import com.example.recetarium.demo.DTOs.CuentaCorrienteRespondDto;
 import com.example.recetarium.demo.Model.Alumno;
 import com.example.recetarium.demo.Model.CuentaCorriente;
 import com.example.recetarium.demo.Model.MedioDePago;
@@ -44,12 +45,17 @@ public class AlumnoService {
         medioDePago.setNombreTitular(requestDto.getTitular());
         medioDePago.setNumTarjeta(requestDto.getNumeroTarjeta());
         medioDePago.setVencimiento(requestDto.getVencimiento());
-        medioDePago.setCuentaCorriente(cuentaCorriente);
+        //medioDePago.setCuentaCorriente(cuentaCorriente);
 
         usuario.get().setAlumno(alumno);
         usuarioRepository.save(usuario.get());
-        cuentaCorrienteService.guardarCuentaCorriente(cuentaCorriente);
+        //cuentaCorrienteService.guardarCuentaCorriente(cuentaCorriente);
         medioDePagoService.guardarMedioDePago(medioDePago);
+    }
+    public CuentaCorrienteRespondDto obtenerCuentaCorriente(Long idAlumno){
+       CuentaCorrienteRespondDto respond=new CuentaCorrienteRespondDto();
+       respond.setSaldo(repository.obtenerSaldoPorIdAlumno(idAlumno));
+       return respond;
     }
 
 
