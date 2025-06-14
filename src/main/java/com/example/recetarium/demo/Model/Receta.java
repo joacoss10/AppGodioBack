@@ -62,14 +62,15 @@ public class Receta {
     private ArrayList<Utilizado> utilizado;
 
     @Lob
+    @Basic(fetch = FetchType.LAZY)
     @Column
     private byte[] imagen;
 
-    public void setCalificacions(ArrayList<Calificacion> calificacions) {
+    public void setCalificacion(ArrayList<Calificacion> calificacions) {
         this.calificacion = calificacions;
     }
 
-    public ArrayList<Calificacion> getCalificacions() {
+    public ArrayList<Calificacion> getCalificacion() {
         return calificacion;
     }
 

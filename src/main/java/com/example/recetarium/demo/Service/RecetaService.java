@@ -1,18 +1,19 @@
 package com.example.recetarium.demo.Service;
 
-import com.example.recetarium.demo.DTOs.IngredienteRequestDto;
-import com.example.recetarium.demo.DTOs.PasoRequestDto;
-import com.example.recetarium.demo.DTOs.RecetaRequestDto;
-import com.example.recetarium.demo.DTOs.RecetaResponseDto;
+import com.example.recetarium.demo.DTOs.*;
 import com.example.recetarium.demo.Model.*;
 import com.example.recetarium.demo.Model.Enums.EstadoReceta;
 import com.example.recetarium.demo.Repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -33,7 +34,12 @@ public class RecetaService {
     private UnidadRepository repoUnidad;
     @Autowired
     private UtilizadoRepository repoUtilizado;
-
+    @Autowired
+    private FavoritoRepository repoFavoritos;
+    @Autowired
+    private CalificacionRepository repoCalificacion;
+//
+    //CREAR RECETA
     @Transactional
     public RecetaResponseDto crearReceta(RecetaRequestDto dto){
         RecetaResponseDto response=new RecetaResponseDto();
@@ -120,5 +126,46 @@ public class RecetaService {
             }
         response.setCodigo(200);
         return response;
+    }
+    //
+    //OBTENER PREVIEW DEL MAIN con logeo o sin logeo
+    @Transactional
+    public List<RecetaPreviewRespondDto> obtenerPreviews(Long idUsuario, Pageable pageable){
+        Page<Receta> recetasAprobadas=repoReceta.findRecetasPublicadas(pageable);
+        List<RecetaPreviewRespondDto> previews=new ArrayList<>();
+        Usuario usuario=null;
+        if(idUsuario!=null){
+            Optional<Usuario> usuarioOp=repoUsuario.findById(idUsuario);
+            usuario=usuarioOp.get();
+        }
+
+        for(Receta receta:recetasAprobadas){
+            RecetaPreviewRespondDto dto=new RecetaPreviewRespondDto();
+            dto.setTitulo(receta.getNombreReceta());
+            dto.setImagenPrincipal(receta.getImagen());
+            dto.setAutor(receta.getUsuario().getAlias());
+            dto.setClasificacionPromedio(calcularPromedio(receta));
+            if(usuario!=null){
+                boolean favorito=repoFavoritos.existsByUsuarioAndReceta(usuario,receta);
+                dto.setEnFavoritos(favorito);
+            }
+            else{
+                dto.setEnFavoritos(false);
+            }
+            previews.add(dto);
+        }
+        return previews;
+    }
+///////////////////////privados pa/////////////////////////////////////
+    private Double calcularPromedio(Receta receta) {
+        List<Calificacion> valoraciones=repoCalificacion.findByReceta(receta);
+        if (valoraciones.isEmpty()){
+            return 0.0;
+        }
+        double total=0;
+        for (Calificacion valor:valoraciones){
+            total+=valor.getCalificacion();
+        }
+        return total/ valoraciones.size();
     }
 }
