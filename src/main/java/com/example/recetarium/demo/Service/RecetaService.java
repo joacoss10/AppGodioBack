@@ -38,7 +38,7 @@ public class RecetaService {
     private FavoritoRepository repoFavoritos;
     @Autowired
     private CalificacionRepository repoCalificacion;
-//
+    //
     //CREAR RECETA
     @Transactional
     public RecetaResponseDto crearReceta(RecetaRequestDto dto){
@@ -131,15 +131,15 @@ public class RecetaService {
     //OBTENER PREVIEW DEL MAIN con logeo o sin logeo
     @Transactional
     public List<RecetaPreviewRespondDto> obtenerPreviews(Long idUsuario, Pageable pageable){
-        Page<Receta> recetasAprobadas=repoReceta.findRecetasPublicadas(pageable);
+        Page<Receta> recetasAprobadas=repoReceta.findRecetasPublicadas(pageable);//busco recetas aprobadas en formato descenciente y por cantidad de pageable
         List<RecetaPreviewRespondDto> previews=new ArrayList<>();
         Usuario usuario=null;
         if(idUsuario!=null){
             Optional<Usuario> usuarioOp=repoUsuario.findById(idUsuario);
-            usuario=usuarioOp.get();
+            usuario=usuarioOp.get();//obtengo usuario para saber si esta en favoritos
         }
 
-        for(Receta receta:recetasAprobadas){
+        for(Receta receta:recetasAprobadas){//construyo el dto segun las recetas encontradas
             RecetaPreviewRespondDto dto=new RecetaPreviewRespondDto();
             dto.setIdReceta(receta.getIdReceta());
             dto.setTitulo(receta.getNombreReceta());
