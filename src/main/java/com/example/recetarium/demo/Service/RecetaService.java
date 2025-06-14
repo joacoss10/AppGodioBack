@@ -141,6 +141,7 @@ public class RecetaService {
 
         for(Receta receta:recetasAprobadas){
             RecetaPreviewRespondDto dto=new RecetaPreviewRespondDto();
+            dto.setIdReceta(receta.getIdReceta());
             dto.setTitulo(receta.getNombreReceta());
             dto.setImagenPrincipal(receta.getImagen());
             dto.setAutor(receta.getUsuario().getAlias());

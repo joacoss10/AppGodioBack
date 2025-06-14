@@ -27,12 +27,18 @@ public class Receta {
     private Usuario usuario;
 
     @OneToMany(mappedBy = "receta",orphanRemoval = true)
-    private ArrayList<Calificacion> calificacion;
+    private List<Calificacion> calificacion;
     @OneToMany(mappedBy = "receta",orphanRemoval = true)
-    private ArrayList<FotoReceta> fotoReceta;
+    private List<FotoReceta> fotoReceta;
 
     @OneToMany(mappedBy = "receta",orphanRemoval = true)
     private List<Paso> paso;
+    @OneToMany(mappedBy = "receta",orphanRemoval = true)
+    private List<Utilizado> utilizado;
+    @Lob
+    @Basic(fetch = FetchType.LAZY)
+    @Column
+    private byte[] imagen;
 
     public EstadoReceta getEstado() {
         return estado;
@@ -42,35 +48,27 @@ public class Receta {
         this.estado = estado;
     }
 
-    public void setFotoRecetas(ArrayList<FotoReceta> fotoRecetas) {
+    public void setFotoRecetas(List<FotoReceta> fotoRecetas) {
         this.fotoReceta = fotoRecetas;
     }
 
-    public void setUtilizados(ArrayList<Utilizado> utilizados) {
+    public void setUtilizados(List<Utilizado> utilizados) {
         this.utilizado = utilizados;
     }
 
-    public ArrayList<FotoReceta> getFotoRecetas() {
+    public List<FotoReceta> getFotoRecetas() {
         return fotoReceta;
     }
 
-    public ArrayList<Utilizado> getUtilizados() {
+    public List<Utilizado> getUtilizados() {
         return utilizado;
     }
 
-    @OneToMany(mappedBy = "receta",orphanRemoval = true)
-    private ArrayList<Utilizado> utilizado;
-
-    @Lob
-    @Basic(fetch = FetchType.LAZY)
-    @Column
-    private byte[] imagen;
-
-    public void setCalificacion(ArrayList<Calificacion> calificacions) {
+    public void setCalificacion(List<Calificacion> calificacions) {
         this.calificacion = calificacions;
     }
 
-    public ArrayList<Calificacion> getCalificacion() {
+    public List<Calificacion> getCalificacion() {
         return calificacion;
     }
 
@@ -137,5 +135,13 @@ public class Receta {
 
     public byte[] getImagen() {
         return imagen;
+    }
+
+    public List<Paso> getPaso() {
+        return paso;
+    }
+
+    public void setPaso(List<Paso> paso) {
+        this.paso = paso;
     }
 }
