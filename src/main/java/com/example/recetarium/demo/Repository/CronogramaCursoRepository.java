@@ -21,6 +21,14 @@ public interface CronogramaCursoRepository extends JpaRepository<CronogramaCurso
 
     @Query("SELECT DISTINCT cc FROM CronogramaCurso cc WHERE cc.sede.id = :idSede")
     Page<CronogramaCurso> findDistinctCursosBySede(@Param("idSede") Long idSede, Pageable pageable);
+    @Query("""
+    SELECT cc FROM CronogramaCurso cc
+    WHERE cc.vacantes > 0
+      AND cc.fechaInicio > CURRENT_DATE
+      AND LOWER(cc.curso.nombreCurso) LIKE %:nombre%
+""")
+    Page<CronogramaCurso> buscarDisponiblesPorNombreCurso(@Param("nombre") String nombre, Pageable pageable);
+
 
 
 }

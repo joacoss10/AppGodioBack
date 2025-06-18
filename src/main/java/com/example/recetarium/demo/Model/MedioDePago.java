@@ -14,8 +14,8 @@ public class MedioDePago {
     private String nombreTitular;
     private String vencimiento;
     private int codSeguridad;
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn (name = "CuentaCorriente", referencedColumnName = "idCuentaCorriente")
+    @OneToOne
+    @JoinColumn(name = "idCuentaCorriente", referencedColumnName = "idCuentaCorriente")
     private CuentaCorriente cuentaCorriente;
 
     public void setIdMedioDePago(long idMedioDePago) {
@@ -57,6 +57,11 @@ public class MedioDePago {
     public int getCodSeguridad() {
         return codSeguridad;
     }
+
+    public CuentaCorriente getCuentaCorriente() {
+        return cuentaCorriente;
+    }
+
 
     public void setCuentaCorriente(CuentaCorriente cuentaCorriente) {
         this.cuentaCorriente = cuentaCorriente;

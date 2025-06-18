@@ -2,6 +2,8 @@ package com.example.recetarium.demo.Controller;
 
 import com.example.recetarium.demo.DTOs.CursoPreviewRespondDto;
 import com.example.recetarium.demo.DTOs.InformacionSedeRespondDto;
+import com.example.recetarium.demo.DTOs.RecetaPreviewRespondDto;
+import com.example.recetarium.demo.DTOs.SedePreviewRespondDto;
 import com.example.recetarium.demo.Service.SedeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -17,10 +19,19 @@ public class SedeController {
     @Autowired
     SedeService service;
 
+    @GetMapping("/preview")
+    public ResponseEntity<Page<SedePreviewRespondDto>> obtenerSedesPreview(@RequestParam String palabra,
+                                                     @RequestParam(defaultValue = "0") int page,
+                                                     @RequestParam (defaultValue = "10")int size){
+        return ResponseEntity.ok(service.obtenerPreviews(palabra,page,size));
+    }
+
     @GetMapping("/informacion")
     public InformacionSedeRespondDto obtenerInformacionSede(@RequestParam Long idSede){
         return service.obtenerInfoSede(idSede);
     }
+
+
     @GetMapping("/cursos")
     public ResponseEntity<Page<CursoPreviewRespondDto>> obtenerCursos (@RequestParam Long idSede,
                                                                        @RequestParam(defaultValue = "0")int page,

@@ -2,6 +2,7 @@ package com.example.recetarium.demo.Service;
 
 import com.example.recetarium.demo.DTOs.CursoPreviewRespondDto;
 import com.example.recetarium.demo.DTOs.InformacionSedeRespondDto;
+import com.example.recetarium.demo.DTOs.SedePreviewRespondDto;
 import com.example.recetarium.demo.Model.CronogramaCurso;
 import com.example.recetarium.demo.Model.Curso;
 import com.example.recetarium.demo.Model.Sede;
@@ -44,6 +45,23 @@ public class SedeService {
                 curso.getNombreCurso(),
                 curso.getDescripcion(),
                 cronogramaCurso.getSede().getIdSede()
+        );
+    }
+    public Page<SedePreviewRespondDto> obtenerPreviews(String palabra, int page, int size){
+        Pageable pageable=PageRequest.of(page,size);
+        Page<Sede> sedes;
+        if(palabra!=null && !palabra.trim().isEmpty()){
+            sedes=sedeRepository.findByNombreSedeContainingIgnoreCase(palabra,pageable);
+        }else{
+            sedes=sedeRepository.findAll(pageable);
+        }
+        return sedes.map(this::mapToPreviewSede);
+    }
+    private SedePreviewRespondDto mapToPreviewSede(Sede sedeencontrada){
+        return new SedePreviewRespondDto(
+                sedeencontrada.getIdSede(),
+                sedeencontrada.getNombreSede(),
+                sedeencontrada.getDireccionSede()
         );
     }
 }

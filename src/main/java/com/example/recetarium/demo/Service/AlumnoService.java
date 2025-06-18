@@ -2,13 +2,18 @@ package com.example.recetarium.demo.Service;
 
 import com.example.recetarium.demo.DTOs.AlumnoRequestDto;
 import com.example.recetarium.demo.DTOs.CuentaCorrienteRespondDto;
+import com.example.recetarium.demo.DTOs.MedioDePagoRequestDto;
+import com.example.recetarium.demo.DTOs.MedioDePagoRespondDto;
 import com.example.recetarium.demo.Model.Alumno;
 import com.example.recetarium.demo.Model.CuentaCorriente;
 import com.example.recetarium.demo.Model.MedioDePago;
 import com.example.recetarium.demo.Model.Usuario;
 import com.example.recetarium.demo.Repository.AlumnoRepository;
+import com.example.recetarium.demo.Repository.CuentaCorrienteRepository;
+import com.example.recetarium.demo.Repository.MedioDePagoRepository;
 import com.example.recetarium.demo.Repository.UsuarioRepository;
 import com.example.recetarium.demo.Utiles.JwtUtil;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -21,9 +26,8 @@ public class AlumnoService {
     @Autowired
     private UsuarioService usuarioService;
     @Autowired
-    private CuentaCorrienteService cuentaCorrienteService;
-    @Autowired
-    private MedioDePagoService medioDePagoService;
+    CuentaCorrienteRepository cuentaCorrienteRepository;
+
     @Autowired
     private UsuarioRepository usuarioRepository;
 
@@ -45,19 +49,50 @@ public class AlumnoService {
         medioDePago.setNombreTitular(requestDto.getTitular());
         medioDePago.setNumTarjeta(requestDto.getNumeroTarjeta());
         medioDePago.setVencimiento(requestDto.getVencimiento());
-        //medioDePago.setCuentaCorriente(cuentaCorriente);
+        medioDePago.setCuentaCorriente(cuentaCorriente);
+        cuentaCorriente.setMedioDePago(medioDePago);
+        medioDePago.setCuentaCorriente(cuentaCorriente);
 
         usuario.get().setAlumno(alumno);
         usuarioRepository.save(usuario.get());
-        //cuentaCorrienteService.guardarCuentaCorriente(cuentaCorriente);
-        medioDePagoService.guardarMedioDePago(medioDePago);
+
     }
     public CuentaCorrienteRespondDto obtenerCuentaCorriente(Long idAlumno){
        CuentaCorrienteRespondDto respond=new CuentaCorrienteRespondDto();
        respond.setSaldo(repository.obtenerSaldoPorIdAlumno(idAlumno));
        return respond;
     }
+    public MedioDePagoRespondDto obtenerMedioDePago(Long idAlumno){
+        MedioDePagoRespondDto response=new MedioDePagoRespondDto();
+        Optional<Alumno> alumno= repository.findById(idAlumno);
+        MedioDePago medioDePago=alumno.get().getCuentaCorriente().getMedioDePago();
 
+        response.setId(medioDePago.getIdMedioDePago());
+        response.setVencimiento(medioDePago.getVencimiento());
+        response.setTitular(medioDePago.getNombreTitular());
+        response.setNumeroTarjeta(medioDePago.getNumTarjeta());
 
+        return response;
+    }
+
+    public MedioDePagoRespondDto nuevoMedioDePago(MedioDePagoRequestDto requestDto){
+        Optional<Alumno> alumno=repository.findById(requestDto.getIdAlumno());
+        CuentaCorriente cuentaCorriente=alumno.get().getCuentaCorriente();
+        MedioDePago anterior=cuentaCorriente.getMedioDePago();
+        cuentaCorriente.setMedioDePago(null);
+        cuentaCorrienteRepository.save(cuentaCorriente);
+
+        MedioDePago nuevoMedioDePago=new MedioDePago();
+        nuevoMedioDePago.setCuentaCorriente(cuentaCorriente);
+        nuevoMedioDePago.setNombreTitular(requestDto.getNombreTitular());
+        nuevoMedioDePago.setNumTarjeta(requestDto.getNumeroTarjeta());
+        nuevoMedioDePago.setVencimiento(requestDto.getVencimiento());
+        nuevoMedioDePago.setCodSeguridad(requestDto.getCodigoSeguridad());
+
+        cuentaCorriente.setMedioDePago(nuevoMedioDePago);
+        cuentaCorrienteRepository.save(cuentaCorriente);
+
+        return obtenerMedioDePago(requestDto.getIdAlumno());
+    }
 
 }

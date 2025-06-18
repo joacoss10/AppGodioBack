@@ -44,5 +44,13 @@ public class PerfilController {
     public CuentaCorrienteRespondDto obtenerCuentaCorriente (@RequestParam Long idAlumno){
        return alumnoService.obtenerCuentaCorriente(idAlumno);
     }
+    @GetMapping("/cuentacorriente/mediodepago")
+    public MedioDePagoRespondDto obtenerMedioDePago(@RequestParam Long idAlumno){
+        return alumnoService.obtenerMedioDePago(idAlumno);
+    }
+    @PostMapping("/cuentacorriente/mediodepago")
+    public MedioDePagoRespondDto borrarMedioDePago(@RequestBody MedioDePagoRequestDto request){
+        return  alumnoService.nuevoMedioDePago(request);
+    }
 
 }

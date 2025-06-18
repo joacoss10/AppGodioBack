@@ -13,8 +13,8 @@ public class CuentaCorriente {
     @Column
     private float saldo;
 
-    @OneToMany(mappedBy = "cuentaCorriente", cascade = CascadeType.ALL)
-    private List<MedioDePago> medioDePago;
+    @OneToOne(mappedBy = "cuentaCorriente", cascade = CascadeType.ALL, orphanRemoval = true)
+    private MedioDePago medioDePago;
 
     public void setIdCuentaCorriente(Long idCuentaCorriente) {
         this.idCuentaCorriente = idCuentaCorriente;
@@ -25,9 +25,7 @@ public class CuentaCorriente {
     }
 
 
-    public void setMedioDePago(List<MedioDePago> medioDePago) {
-        this.medioDePago = medioDePago;
-    }
+
 
     public Long getIdCuentaCorriente() {
         return idCuentaCorriente;
@@ -38,7 +36,11 @@ public class CuentaCorriente {
     }
 
 
-    public List<MedioDePago> getMedioDePago() {
+    public void setMedioDePago(MedioDePago medioDePago) {
+        this.medioDePago = medioDePago;
+    }
+
+    public MedioDePago getMedioDePago() {
         return medioDePago;
     }
 }

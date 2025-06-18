@@ -20,8 +20,11 @@ public class CursoController {
     @GetMapping("/preview")
     public ResponseEntity<Page<CursoPreviewRespondDto>> obtenerPreviews(
             @RequestParam (defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size) {
-        Page<CursoPreviewRespondDto> previews=cursoService.obtenerPreviews(PageRequest.of(page,size));
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam String palabra,
+            @RequestParam String filtro
+    ) {
+        Page<CursoPreviewRespondDto> previews=cursoService.obtenerPreviews(PageRequest.of(page,size),palabra,filtro);
         return ResponseEntity.ok(previews);
     }
     @GetMapping("/infogeneral")

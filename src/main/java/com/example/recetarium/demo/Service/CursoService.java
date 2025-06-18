@@ -9,7 +9,9 @@ import com.example.recetarium.demo.Repository.CronogramaCursoRepository;
 import com.example.recetarium.demo.Repository.CursoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -26,9 +28,22 @@ public class CursoService {
 
 
 
-    public Page<CursoPreviewRespondDto> obtenerPreviews(Pageable pageable){
-        return cronogramaCursoRepository.findCronogramasDisponibles(pageable)
-                .map(this::mapToPreviewDto);
+    public Page<CursoPreviewRespondDto> obtenerPreviews(Pageable pageable, String palabra, String filtro){
+        Sort sort= Sort.unsorted();
+        if("fecha".equalsIgnoreCase(filtro)){
+            sort=Sort.by(Sort.Direction.ASC, "fechaInicio");
+        }else if("alfabeticamente".equalsIgnoreCase(filtro)){
+            sort=Sort.by(Sort.Direction.ASC,"curso.nombreCurso");
+        }
+        Pageable sortedPageable= PageRequest.of(pageable.getPageNumber(),pageable.getPageSize(),sort);
+        if (palabra!=null && !palabra.trim().isEmpty()){
+            return cronogramaCursoRepository.buscarDisponiblesPorNombreCurso(palabra.toLowerCase(),sortedPageable)
+                    .map(this::mapToPreviewDto);
+        }else{
+            return cronogramaCursoRepository.findCronogramasDisponibles(sortedPageable)
+                    .map(this::mapToPreviewDto);
+        }
+
     }
     private CursoPreviewRespondDto mapToPreviewDto(CronogramaCurso cronogramaCurso) {
         Curso curso=cronogramaCurso.getCurso();
