@@ -38,6 +38,7 @@ public class RecetaService {
     private FavoritoRepository repoFavoritos;
     @Autowired
     private CalificacionRepository repoCalificacion;
+    //operaciones basicas receta///////////////////////////////////////////////////
     //
     //CREAR RECETA
     @Transactional
@@ -128,6 +129,168 @@ public class RecetaService {
         return response;
     }
     //
+    //ELIMINAR RECETA
+    @Transactional
+    public RecetaResponseDto eliminarReceta(Long idReceta){
+        Optional<Receta> recetaOp=repoReceta.findById(idReceta);
+        RecetaResponseDto response=new RecetaResponseDto();
+        if(recetaOp.isPresent()){//no deberia de pasar peroooooo
+            repoReceta.delete(recetaOp.get());
+            response.setCodigo(200);
+        }
+        else{
+            response.setCodigo(404);
+        }
+        return response;
+    }
+    //
+    //EDITAR RECETA
+    @Transactional
+    public RecetaResponseDto editarReceta(Long idReceta, RecetaRequestDto dto){
+        RecetaResponseDto response=new RecetaResponseDto();
+        Optional<Receta> recetaOp = repoReceta.findById(idReceta);
+        if (recetaOp.isEmpty()) {
+            response.setCodigo(404);
+            return response;
+        }
+        Receta receta = recetaOp.get();
+        //
+        for (IngredienteRequestDto ingredienteDto : dto.getIngredientesUsados()) {
+            Optional<Unidad> unidadOp = repoUnidad.findByDescripcion(ingredienteDto.getUnidad());
+            if (unidadOp.isEmpty()) {//unidad no encontrada, no deberia de pasar pero por las dudas
+                response.setCodigo(401);
+                return response;
+            }
+        }
+        //
+        receta.setNombreReceta(dto.getNombreReceta());
+        receta.setDescripcionReceta(dto.getDescripcionReceta());
+        receta.setPorciones(dto.getPorciones());
+        receta.setCantidadPersonas(dto.getCantidadPersonas());
+        receta.setImagen(dto.getImagenPrincipal());
+        //limpio relaciones
+        repoFotos.deleteByReceta(receta);
+        repoPaso.deleteByReceta(receta);
+        repoUtilizado.deleteByReceta(receta);
+        //
+        repoReceta.save(receta);
+        //
+        if (dto.getImagenes() != null) {
+            for (byte[] imagen : dto.getImagenes()) {
+                FotoReceta foto = new FotoReceta();
+                foto.setReceta(receta);
+                foto.setFoto(imagen);
+                repoFotos.save(foto);
+            }
+        }
+        //guardar pasos
+        if(dto.getPasos()!=null){
+            for(PasoRequestDto pasoDto: dto.getPasos()){
+                Paso paso=new Paso();
+                paso.setNumeroDePaso(pasoDto.getNumeroPaso());
+                paso.setTexto(pasoDto.getTexto());
+                paso.setReceta(receta);
+                repoPaso.save(paso);
+                if(pasoDto.getImagen()!=null){//paso con imagen
+                    Multimedia multimedia=new Multimedia();
+                    multimedia.setContenido(pasoDto.getImagen());
+                    multimedia.setTipoDeContenido("Imagen");
+                    multimedia.setPaso(paso);
+                    repoMultimedia.save(multimedia);
+                }
+            }
+        }
+        //ingredientes
+        for(IngredienteRequestDto ingredienteDto: dto.getIngredientesUsados()){
+            Optional<Ingrediente>IngredienteOp=repoIngrediente.findByNombre(ingredienteDto.getNombreIngrediente());
+            Optional<Unidad> unidadOp=repoUnidad.findByDescripcion(ingredienteDto.getUnidad());
+
+            if(IngredienteOp.isPresent()){//ingrediente existente
+                Utilizado usado=new Utilizado();
+                usado.setCantidad(ingredienteDto.getCantidad());
+                usado.setObservaciones(ingredienteDto.getObservacion());
+                usado.setReceta(receta);
+                usado.setIngrediente(IngredienteOp.get());
+                usado.setUnidad(unidadOp.get());
+                repoUtilizado.save(usado);
+            }
+            else{//EL INGREDIENTE ES NUEVO
+                Ingrediente ingrediente=new Ingrediente();
+                ingrediente.setNombre(ingredienteDto.getNombreIngrediente());
+                repoIngrediente.save(ingrediente);
+                //
+                Utilizado usado=new Utilizado();
+                usado.setCantidad(ingredienteDto.getCantidad());
+                usado.setObservaciones(ingredienteDto.getObservacion());
+                usado.setReceta(receta);
+                usado.setIngrediente(ingrediente);
+                usado.setUnidad(unidadOp.get());
+                repoUtilizado.save(usado);
+            }
+        }
+        response.setCodigo(200);
+        return response;
+    }
+    //
+    //ESTRELLITAS RECETA
+    public CalificacionResponseDto calificarReceta(CalificacionRequestDto dto){
+        CalificacionResponseDto response=new CalificacionResponseDto();
+        Optional<Usuario> usuarioOp = repoUsuario.findById(dto.getIdUsuario());
+        Optional<Receta> recetaOp = repoReceta.findById(dto.getIdReceta());
+        if (usuarioOp.isEmpty() || recetaOp.isEmpty()) {
+            response.setCodigo(400);
+            return response;
+        }
+        //
+        Optional<Calificacion> calificacionOp=repoCalificacion.findByUsuarioAndReceta(usuarioOp.get(), recetaOp.get());
+        if(calificacionOp.isEmpty()){//nunca califico o comento esa receta
+            Calificacion calificacion=new Calificacion();
+            calificacion.setUsuario(usuarioOp.get());
+            calificacion.setReceta(recetaOp.get());
+            calificacion.setCalificacion(dto.getCalificacion());
+            repoCalificacion.save(calificacion);
+        }
+        else{//modifica la puntacion dada
+            Calificacion calificacion=calificacionOp.get();
+            calificacion.setCalificacion(dto.getCalificacion());
+            repoCalificacion.save(calificacion);
+        }
+        response.setCodigo(200);
+        return response;
+    }
+    //
+    //COMENTAR RECETA
+    public CalificacionResponseDto comentarReceta(CalificacionRequestDto dto){
+        CalificacionResponseDto response=new CalificacionResponseDto();
+        Optional<Usuario> usuarioOp = repoUsuario.findById(dto.getIdUsuario());
+        Optional<Receta> recetaOp = repoReceta.findById(dto.getIdReceta());
+        if (usuarioOp.isEmpty() || recetaOp.isEmpty()) {
+            response.setCodigo(400);
+            return response;
+        }
+        if (dto.getComentarios() == null || dto.getComentarios().trim().isEmpty()) {
+            response.setCodigo(422); //comentario vacio
+            return response;
+        }
+        //
+        Optional<Calificacion> calificacionOp=repoCalificacion.findByUsuarioAndReceta(usuarioOp.get(), recetaOp.get());
+        if(calificacionOp.isEmpty()){//nunca califico o comento esa receta
+            Calificacion calificacion=new Calificacion();
+            calificacion.setUsuario(usuarioOp.get());
+            calificacion.setReceta(recetaOp.get());
+            calificacion.setComentarios(dto.getComentarios());
+            repoCalificacion.save(calificacion);
+        }
+        else{//modifica el comentario existente
+            Calificacion calificacion=calificacionOp.get();
+            calificacion.setComentarios(dto.getComentarios());
+            repoCalificacion.save(calificacion);
+        }
+        response.setCodigo(200);
+        return response;
+    }
+    //////////////////////////////previews///////////////////////////////////////////
+    //
     //OBTENER PREVIEW DEL MAIN con logeo o sin logeo
     @Transactional
     public List<RecetaPreviewRespondDto> obtenerPreviews(Long idUsuario, Pageable pageable){
@@ -157,7 +320,7 @@ public class RecetaService {
         }
         return previews;
     }
-///////////////////////privados pa/////////////////////////////////////
+///////////////////////privados paaaaaaaaaa/////////////////////////////////////
     private Double calcularPromedio(Receta receta) {
         List<Calificacion> valoraciones=repoCalificacion.findByReceta(receta);
         if (valoraciones.isEmpty()){

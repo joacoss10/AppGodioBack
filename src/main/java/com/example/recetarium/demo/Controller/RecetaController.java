@@ -1,8 +1,6 @@
 package com.example.recetarium.demo.Controller;
 
-import com.example.recetarium.demo.DTOs.RecetaPreviewRespondDto;
-import com.example.recetarium.demo.DTOs.RecetaRequestDto;
-import com.example.recetarium.demo.DTOs.RecetaResponseDto;
+import com.example.recetarium.demo.DTOs.*;
 import com.example.recetarium.demo.Service.RecetaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -14,6 +12,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/recetas")
 public class RecetaController {
+    /////////////operaciones con recetas/////////////////
     @Autowired
     RecetaService recetaService;
 
@@ -21,9 +20,24 @@ public class RecetaController {
     public RecetaResponseDto crearReceta(@RequestBody RecetaRequestDto dto){
         return recetaService.crearReceta(dto);
     }
+    @DeleteMapping
+    public RecetaResponseDto eliminarReceta(@RequestParam Long id){
+        return recetaService.eliminarReceta(id);
+    }
+    @PutMapping
+    public RecetaResponseDto editarReceta(@RequestParam Long id,@RequestBody RecetaRequestDto dto){
+        return  recetaService.editarReceta(id,dto);
+    }
+    @PostMapping("/calificacion")
+    public CalificacionResponseDto estrellitasReceta(@RequestBody CalificacionRequestDto dto){
+        return recetaService.calificarReceta(dto);
+    }
+    @PostMapping("/comentar")
+    public CalificacionResponseDto comentarReceta(@RequestBody CalificacionRequestDto dto){
+        return recetaService.comentarReceta(dto);
+    }
 
-
-
+//////////previews/////////////
     @GetMapping("/previews")
         public List<RecetaPreviewRespondDto> obtenerPreviews(
             @RequestParam(required = false) Long idUsuario,

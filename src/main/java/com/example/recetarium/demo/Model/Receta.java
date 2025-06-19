@@ -35,10 +35,21 @@ public class Receta {
     private List<Paso> paso;
     @OneToMany(mappedBy = "receta",orphanRemoval = true)
     private List<Utilizado> utilizado;
+    @OneToMany(mappedBy = "receta", orphanRemoval = true)
+    private List<RecetaFavorito> recetaFavoritos;
+
     @Lob
     @Basic(fetch = FetchType.LAZY)
     @Column
     private byte[] imagen;
+
+    public List<RecetaFavorito> getRecetaFavoritos() {
+        return recetaFavoritos;
+    }
+
+    public void setRecetaFavoritos(List<RecetaFavorito> recetaFavoritos) {
+        this.recetaFavoritos = recetaFavoritos;
+    }
 
     public EstadoReceta getEstado() {
         return estado;

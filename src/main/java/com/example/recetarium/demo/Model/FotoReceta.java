@@ -13,7 +13,7 @@ public class FotoReceta {
     @Column
     private byte[] foto;
     private boolean principal;
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "Receta",referencedColumnName = "idReceta")
     private Receta receta;
 
