@@ -49,8 +49,8 @@ public class PerfilController {
         return alumnoService.obtenerMedioDePago(idAlumno);
     }
     @PostMapping("/cuentacorriente/mediodepago")
-    public MedioDePagoRespondDto borrarMedioDePago(@RequestBody MedioDePagoRequestDto request){
-        return  alumnoService.nuevoMedioDePago(request);
+    public void borrarMedioDePago(@RequestBody MedioDePagoRequestDto request){
+        alumnoService.nuevoMedioDePago(request);
     }
 
 }

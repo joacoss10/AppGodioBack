@@ -62,20 +62,25 @@ public class AlumnoService {
        respond.setSaldo(repository.obtenerSaldoPorIdAlumno(idAlumno));
        return respond;
     }
-    public MedioDePagoRespondDto obtenerMedioDePago(Long idAlumno){
-        MedioDePagoRespondDto response=new MedioDePagoRespondDto();
-        Optional<Alumno> alumno= repository.findById(idAlumno);
-        MedioDePago medioDePago=alumno.get().getCuentaCorriente().getMedioDePago();
+    public MedioDePagoRespondDto obtenerMedioDePago(Long idAlumno) {
+        MedioDePagoRespondDto response = new MedioDePagoRespondDto();
+        Optional<Alumno> alumno = repository.findById(idAlumno);
+        MedioDePago medioDePago = alumno.get().getCuentaCorriente().getMedioDePago();
 
         response.setId(medioDePago.getIdMedioDePago());
         response.setVencimiento(medioDePago.getVencimiento());
         response.setTitular(medioDePago.getNombreTitular());
-        response.setNumeroTarjeta(medioDePago.getNumTarjeta());
+
+        String numeroOculto= medioDePago.getNumTarjeta();
+        String ultimoCuatro=numeroOculto.substring(numeroOculto.length()-4);
+        String numeroTarjeta="*".repeat(numeroOculto.length()-4)+ultimoCuatro;
+
+        response.setNumeroTarjeta(numeroTarjeta);
 
         return response;
     }
 
-    public MedioDePagoRespondDto nuevoMedioDePago(MedioDePagoRequestDto requestDto){
+    public void nuevoMedioDePago(MedioDePagoRequestDto requestDto){
         Optional<Alumno> alumno=repository.findById(requestDto.getIdAlumno());
         CuentaCorriente cuentaCorriente=alumno.get().getCuentaCorriente();
         MedioDePago anterior=cuentaCorriente.getMedioDePago();
@@ -91,8 +96,6 @@ public class AlumnoService {
 
         cuentaCorriente.setMedioDePago(nuevoMedioDePago);
         cuentaCorrienteRepository.save(cuentaCorriente);
-
-        return obtenerMedioDePago(requestDto.getIdAlumno());
     }
 
 }
