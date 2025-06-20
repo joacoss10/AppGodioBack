@@ -3,6 +3,7 @@ package com.example.recetarium.demo.Controller;
 import com.example.recetarium.demo.DTOs.*;
 import com.example.recetarium.demo.Service.RecetaService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -36,15 +37,27 @@ public class RecetaController {
     public CalificacionResponseDto comentarReceta(@RequestBody CalificacionRequestDto dto){
         return recetaService.comentarReceta(dto);
     }
+    /////////////
+    @GetMapping("/detalle")//es publico aunque no tenga el auth
+    public RecetaDetalleResponseDto mostrarRecetaCompleta(@RequestParam Long idReceta,@RequestParam(required = false)Long idUsuario){
+        return recetaService.obtenerRecetaCompleta(idReceta,idUsuario);
+    }
+    ////////
 
 //////////previews/////////////
-    @GetMapping("/previews")
-        public List<RecetaPreviewRespondDto> obtenerPreviews(
+    @GetMapping("/previews")//es publico aunque no tenga el auth
+        public Page<RecetaPreviewRespondDto> obtenerPreviews(
             @RequestParam(required = false) Long idUsuario,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "5") int size
     ){
         Pageable pageable = PageRequest.of(page, size);
         return recetaService.obtenerPreviews(idUsuario,pageable);
+    }
+    //
+    @GetMapping("/previews/misrecetas")
+    public Page<MisRecetasPreviewRespondDto> obtenerMisRecetas(@RequestParam Long idUsuario, @RequestParam(defaultValue = "0") int page,@RequestParam(defaultValue = "5") int size){
+        Pageable pageable = PageRequest.of(page, size);
+        return recetaService.obtenerMisRecetasPreview(idUsuario,pageable);
     }
 }

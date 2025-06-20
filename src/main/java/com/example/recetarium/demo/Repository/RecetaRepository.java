@@ -20,4 +20,5 @@ public interface RecetaRepository extends JpaRepository<Receta, Long> {
         ORDER BY r.fechaCreacion DESC
     """)
     Page<Receta> findRecetasPublicadas(Pageable pageable);
+    Page<Receta> findByUsuario_IdUsuarioOrderByFechaCreacionDesc(Long idUsuario, Pageable pageable);
 }

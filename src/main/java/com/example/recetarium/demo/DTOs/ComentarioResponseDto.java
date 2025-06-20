@@ -4,6 +4,7 @@ public class ComentarioResponseDto {
     private String aliasUsuario;
     private String comentario;
 
+
     public String getAliasUsuario() {
         return aliasUsuario;
     }

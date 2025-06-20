@@ -10,7 +10,7 @@ public class Calificacion {
     private Long idCalificacion;
 
     @Column
-    private int calificacion;
+    private Integer calificacion;
     private String comentarios;
 
     @ManyToOne
@@ -49,7 +49,7 @@ public class Calificacion {
         return idCalificacion;
     }
 
-    public int getCalificacion() {
+    public Integer getCalificacion() {
         return calificacion;
     }
 

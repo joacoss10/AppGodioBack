@@ -1,8 +1,8 @@
 package com.example.recetarium.demo.DTOs;
 
-public class IngredienteUsadoResponseDto {
-    private String nombreIngrediente;
-    private String unidad;
+public class IngredienteUsadoResponseDto {//utilizado
+    private String nombreIngrediente;//mach con ingrediente
+    private String unidad;//mach con unidad
     private int cantidad;
     private String observacion;
 
