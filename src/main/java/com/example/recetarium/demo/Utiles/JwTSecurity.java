@@ -21,6 +21,7 @@ public class JwTSecurity {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/auth/**").permitAll()
                         .requestMatchers("/recetas/previews").permitAll()
+                        .requestMatchers("/recetas/detalle").permitAll()
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);

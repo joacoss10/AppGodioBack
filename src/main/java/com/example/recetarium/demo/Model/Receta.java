@@ -27,16 +27,16 @@ public class Receta {
     private Usuario usuario;
 
     @OneToMany(mappedBy = "receta",orphanRemoval = true)
-    private List<Calificacion> calificacion;
+    private List<Calificacion> calificacion = new ArrayList<>();
     @OneToMany(mappedBy = "receta",orphanRemoval = true)
-    private List<FotoReceta> fotoReceta;
+    private List<FotoReceta> fotoReceta = new ArrayList<>();
 
     @OneToMany(mappedBy = "receta",orphanRemoval = true)
-    private List<Paso> paso;
+    private List<Paso> paso = new ArrayList<>();
     @OneToMany(mappedBy = "receta",orphanRemoval = true)
-    private List<Utilizado> utilizado;
+    private List<Utilizado> utilizado = new ArrayList<>();
     @OneToMany(mappedBy = "receta", orphanRemoval = true)
-    private List<RecetaFavorito> recetaFavoritos;
+    private List<RecetaFavorito> recetaFavoritos = new ArrayList<>();
 
     @Lob
     @Basic(fetch = FetchType.LAZY)

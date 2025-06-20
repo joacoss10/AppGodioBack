@@ -7,8 +7,10 @@ import com.example.recetarium.demo.Repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.data.domain.PageImpl;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
@@ -289,20 +291,108 @@ public class RecetaService {
         response.setCodigo(200);
         return response;
     }
-    //////////////////////////////previews///////////////////////////////////////////
+    //////////////////////////////previews y detalle receta///////////////////////////////////////////
+    //
+    //MOSTRAR RECETA COMPLETA
+    @Transactional
+    public RecetaDetalleResponseDto obtenerRecetaCompleta(Long idReceta,Long idUsuario){
+        RecetaDetalleResponseDto response=new RecetaDetalleResponseDto();
+        Optional<Receta> recetaOp=repoReceta.findById(idReceta);
+        if(recetaOp.isEmpty()){
+            return null;
+        }
+        Receta receta= recetaOp.get();
+        //datos basicos
+        response.setIdReceta(receta.getIdReceta());
+        response.setNombreReceta(receta.getNombreReceta());
+        response.setDescripcionReceta(receta.getDescripcionReceta());
+        response.setPorciones(receta.getPorciones());
+        response.setCantidadPersonas(receta.getCantidadPersonas());
+        response.setAliasCreador(receta.getUsuario().getAlias());
+        response.setImagenPrincipal(receta.getImagen());
+        response.setFechaCreacion(receta.getFechaCreacion());
+        //coca
+        //imagenes adicionales a la receta
+        List<FotoReceta> imagenesAdicionales=receta.getFotoRecetas();
+        List<byte[]> imagenes = new ArrayList<>();
+        for(FotoReceta foto:imagenesAdicionales){
+            imagenes.add(foto.getFoto());
+        }
+        response.setImagenesAdicionales(imagenes);
+        //coca
+        //pasos
+        List<Paso> pasos=receta.getPaso();
+        List<PasoResponseDto> pasoResponse=new ArrayList<>();
+        for(Paso p:pasos){
+            PasoResponseDto pasoResponseDto=new PasoResponseDto();
+            pasoResponseDto.setNumeroPaso(p.getNumeroDePaso());
+            pasoResponseDto.setTexto(p.getTexto());
+            if(p.getMultimedias()!=null){//por si ese paso no tiene multimedia
+                pasoResponseDto.setImagen(p.getMultimedias().getContenido());
+            }
+            pasoResponse.add(pasoResponseDto);
+        }
+        response.setPasos(pasoResponse);
+        //coca
+        //ingredientes
+        List<IngredienteUsadoResponseDto> ingredientes=new ArrayList<>();
+        for(Utilizado u:receta.getUtilizados()){
+            IngredienteUsadoResponseDto ingredienteDto=new IngredienteUsadoResponseDto();
+            ingredienteDto.setNombreIngrediente(u.getIngrediente().getNombre());
+            ingredienteDto.setUnidad(u.getUnidad().getDescripcion());
+            ingredienteDto.setCantidad(u.getCantidad());
+            ingredienteDto.setObservacion(u.getObservaciones());
+            ingredientes.add(ingredienteDto);
+        }
+        response.setIngredientesUsados(ingredientes);
+        //coca
+        //comentarios
+        List<ComentarioResponseDto> comentarios=new ArrayList<>();
+        for(Calificacion comentario: receta.getCalificacion()){
+            if(comentario.getComentarios()!=null && !comentario.getComentarios().isBlank()){
+                ComentarioResponseDto comentarioDto=new ComentarioResponseDto();
+                comentarioDto.setComentario(comentario.getComentarios());
+                comentarioDto.setAliasUsuario(comentario.getUsuario().getAlias());
+                comentarios.add(comentarioDto);
+            }
+        }
+        response.setComentarios(comentarios);
+        //coca
+        //estrellitasssssss
+        response.setPromedioCalificacion(calcularPromedio(receta));
+        //coca
+        //la tiene en favs?
+        if(idUsuario!=null){
+            Optional<Usuario> usuarioOp=repoUsuario.findById(idUsuario);
+            if(usuarioOp.isPresent()){
+                boolean favorito=repoFavoritos.existsByUsuarioAndReceta(usuarioOp.get(), receta);
+                response.setFavorito(favorito);
+            }
+            else{
+                response.setFavorito(false);
+            }
+        }
+        else{
+            response.setFavorito(false);
+        }
+    return response;
+
+    }
     //
     //OBTENER PREVIEW DEL MAIN con logeo o sin logeo
     @Transactional
-    public List<RecetaPreviewRespondDto> obtenerPreviews(Long idUsuario, Pageable pageable){
+    public Page<RecetaPreviewRespondDto> obtenerPreviews(Long idUsuario, Pageable pageable){
         Page<Receta> recetasAprobadas=repoReceta.findRecetasPublicadas(pageable);//busco recetas aprobadas en formato descenciente y por cantidad de pageable
         List<RecetaPreviewRespondDto> previews=new ArrayList<>();
         Usuario usuario=null;
         if(idUsuario!=null){
             Optional<Usuario> usuarioOp=repoUsuario.findById(idUsuario);
-            usuario=usuarioOp.get();//obtengo usuario para saber si esta en favoritos
+            if(usuarioOp.isPresent()){
+                usuario=usuarioOp.get();//obtengo usuario para saber si esta en favoritos
+            }
         }
 
-        for(Receta receta:recetasAprobadas){//construyo el dto segun las recetas encontradas
+        for(Receta receta:recetasAprobadas.getContent()){//construyo el dto segun las recetas encontradas
             RecetaPreviewRespondDto dto=new RecetaPreviewRespondDto();
             dto.setIdReceta(receta.getIdReceta());
             dto.setTitulo(receta.getNombreReceta());
@@ -318,7 +408,34 @@ public class RecetaService {
             }
             previews.add(dto);
         }
-        return previews;
+        return new PageImpl<>(previews, pageable, recetasAprobadas.getTotalElements());
+    }
+    //
+    //OBTENER previews de MIS RECETAS
+    @Transactional
+    public Page<MisRecetasPreviewRespondDto> obtenerMisRecetasPreview(Long idUsuario,Pageable pageable){
+        Optional<Usuario> usuarioOp=repoUsuario.findById(idUsuario);
+        if(usuarioOp.isEmpty()){
+            return Page.empty();
+        }
+        Page<Receta> recetaPage=repoReceta.findByUsuario_IdUsuarioOrderByFechaCreacionDesc(idUsuario,pageable);
+        List<MisRecetasPreviewRespondDto> previews=new ArrayList<>();
+
+        for(Receta receta:recetaPage.getContent()){
+            MisRecetasPreviewRespondDto dto=new MisRecetasPreviewRespondDto();
+            dto.setIdReceta(receta.getIdReceta());
+            dto.setTitulo(receta.getNombreReceta());
+            dto.setImagenPrincipal(receta.getImagen());
+            dto.setAutor(receta.getUsuario().getAlias());
+            dto.setClasificacionPromedio(calcularPromedio(receta));
+            //
+            boolean favorito=repoFavoritos.existsByUsuarioAndReceta(usuarioOp.get(), receta);
+            dto.setEnFavoritos(favorito);
+            //
+            dto.setEstado(receta.getEstado());
+            previews.add(dto);
+        }
+        return new PageImpl<>(previews, pageable, recetaPage.getTotalElements());
     }
 ///////////////////////privados paaaaaaaaaa/////////////////////////////////////
     private Double calcularPromedio(Receta receta) {
@@ -327,9 +444,16 @@ public class RecetaService {
             return 0.0;
         }
         double total=0;
+        int cantidadValidas=0;
         for (Calificacion valor:valoraciones){
-            total+=valor.getCalificacion();
+            if(valor.getCalificacion()!=null){
+                total+=valor.getCalificacion();
+                cantidadValidas++;
+            }
         }
-        return total/ valoraciones.size();
+        if(cantidadValidas==0){
+            return 0.0;
+        }
+        return total / cantidadValidas;
     }
 }
