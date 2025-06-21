@@ -25,4 +25,18 @@ public interface FavoritoRepository extends JpaRepository<RecetaFavorito,Long> {
 """)
     Page<RecetaFavorito> findFavoritosOrdenadosPorFecha(@Param("idUsuario") Long idUsuario, Pageable pageable);
 
+    /////////// FILTRO DE BSUQUEDAD////////////////////
+    @Query("""
+    SELECT rf FROM RecetaFavorito rf
+    WHERE rf.usuario.idUsuario = :idUsuario
+      AND LOWER(rf.receta.nombreReceta) LIKE LOWER(CONCAT('%', :nombre, '%'))
+    ORDER BY rf.receta.fechaCreacion DESC
+""")
+    Page<RecetaFavorito> buscarFavoritosPorNombre(
+            @Param("idUsuario") Long idUsuario,
+            @Param("nombre") String nombre,
+            Pageable pageable
+    );
+
+
 }

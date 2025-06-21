@@ -21,4 +21,17 @@ public interface RecetaRepository extends JpaRepository<Receta, Long> {
     """)
     Page<Receta> findRecetasPublicadas(Pageable pageable);
     Page<Receta> findByUsuario_IdUsuarioOrderByFechaCreacionDesc(Long idUsuario, Pageable pageable);
+////////////////////////////////////FILTROS DE BSUQUEDA///////////////////////////////////////////////////
+@Query("""
+    SELECT r FROM Receta r
+    WHERE r.usuario.idUsuario = :idUsuario
+      AND LOWER(r.nombreReceta) LIKE LOWER(CONCAT('%', :nombre, '%'))
+    ORDER BY r.fechaCreacion DESC
+""")
+Page<Receta> buscarMisRecetasPorNombre(
+        @Param("idUsuario") Long idUsuario,
+        @Param("nombre") String nombre,
+        Pageable pageable
+);
+
 }
