@@ -99,6 +99,41 @@ public class BusquedaRecetaService {//AUNQUE SEA UN SERVICE NUEVO USA LOS REPOSI
         }
         return new PageImpl<>(previews, pageable, favoritosPage.getTotalElements());
     }
+    //
+    //MAIN BARRA DE BUSQUEDA CON FILTROS
+    public Page<RecetaPreviewRespondDto> buscarRecetasMainFiltro(BusquedaMainRecetaRequestDto dto,Pageable pageable){
+        Usuario usuario=null;
+        if(dto.getIdUsuario()!=null){
+            Optional<Usuario> usuarioOp=repoUsuario.findById(dto.getIdUsuario());
+            if(usuarioOp.isPresent()){
+                usuario=usuarioOp.get();//obtengo usuario para saber si esta en favoritos
+            }
+            else{
+                return Page.empty();
+            }
+        }
+        //
+        Page<Receta> recetasPage=repoReceta.buscarRecetasPorNombreRecetaFiltroMain(dto.getPalabraClave(), pageable);
+
+        List<RecetaPreviewRespondDto> previews=new ArrayList<>();
+        for(Receta receta: recetasPage.getContent()){
+            RecetaPreviewRespondDto dtoResponse=new RecetaPreviewRespondDto();
+            dtoResponse.setIdReceta(receta.getIdReceta());
+            dtoResponse.setTitulo(receta.getNombreReceta());
+            dtoResponse.setImagenPrincipal(receta.getImagen());
+            dtoResponse.setAutor(receta.getUsuario().getAlias());
+            dtoResponse.setClasificacionPromedio(calcularPromedio(receta));
+            if(usuario!=null){
+                boolean favorito=repoFavoritos.existsByUsuarioAndReceta(usuario,receta);
+                dtoResponse.setEnFavoritos(favorito);
+            }
+            else{
+                dtoResponse.setEnFavoritos(false);
+            }
+            previews.add(dtoResponse);
+        }
+        return new PageImpl<>(previews,pageable,recetasPage.getTotalElements());
+    }
 
     ///////////////////////privados paaaaaaaaaa/////////////////////////////////////
     private Double calcularPromedio(Receta receta) {

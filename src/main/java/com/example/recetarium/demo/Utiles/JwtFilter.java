@@ -23,7 +23,7 @@ public class JwtFilter extends OncePerRequestFilter {
 
         // NO FILTRAR en /auth/ ni en main con las recetas
         String path = request.getRequestURI();
-        if (path.startsWith("/auth/")|| path.equals("/recetas/previews") || path.equals("/recetas/detalle")) {
+        if (path.startsWith("/auth/")|| path.equals("/recetas/previews") || path.equals("/recetas/detalle") || path.equals("/buscar/main")) {
             filterChain.doFilter(request, response);
             return;
         }
