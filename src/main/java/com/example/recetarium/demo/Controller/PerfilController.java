@@ -5,6 +5,7 @@ import com.example.recetarium.demo.Service.AlumnoService;
 import com.example.recetarium.demo.Service.AsistenciaACursoService;
 import com.example.recetarium.demo.Service.CursoService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -23,6 +24,10 @@ public class PerfilController {
     @GetMapping("/miscursos")
     public List<MisCursosPreviewRespondDto> obtenerMisCursos(@RequestParam Long idAlumno){
         return asistenciaACursoService.obtenerCursosAlumno(idAlumno);
+    }
+    @GetMapping("miscursos/realizados")
+    public List<MisCursosPreviewRespondDto>obtenerCursosRealizados(@RequestParam Long idAlumno) {
+        return asistenciaACursoService.obtenerCursosFinalizadosAlumno(idAlumno);
     }
     @GetMapping("/miscursos/curso/informacion")
     public MisCursosInformacionRespondDto obtenerInfoCurso(@RequestParam Long idAlumno,@RequestParam Long idCronograma){
