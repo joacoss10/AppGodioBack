@@ -10,6 +10,7 @@ import com.example.recetarium.demo.Repository.AsistenciaACursoRepository;
 import com.example.recetarium.demo.Repository.CronogramaCursoRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -30,18 +31,20 @@ public class AsistenciaACursoService {
         InscripcionRespondDto respond=new InscripcionRespondDto();
         if(estaIncriptoAlCurso(idAlumno,idCronograma)) {
             respond.setCodigo(900);
-        }else{
-            AsistenciaCurso asistenciaCurso=new AsistenciaCurso();
-            Optional<Alumno> alumno=alumnoRepository.findById(idAlumno);
-            Optional<CronogramaCurso> cronograma=cronogramaCursoRepository.findById(idCronograma);
+        }else if(asistenciaACursoRepository.findByAlumno_IdAlumno(idAlumno).size()==6){
+                respond.setCodigo(902); ///verifica que no este inscripto a 6 cursos (que es el maximo)
+        }
+        else{
+            AsistenciaCurso asistenciaCurso = new AsistenciaCurso();
+            Optional<Alumno> alumno = alumnoRepository.findById(idAlumno);
+            Optional<CronogramaCurso> cronograma = cronogramaCursoRepository.findById(idCronograma);
             asistenciaCurso.setAlumno(alumno.get());
             asistenciaCurso.setCronogramaCurso(cronograma.get());
-            CronogramaCurso cronogramaCurso=cronograma.get();
-            cronogramaCurso.setVacantes(cronogramaCurso.getVacantes()-1);
+            CronogramaCurso cronogramaCurso = cronograma.get();
+            cronogramaCurso.setVacantes(cronogramaCurso.getVacantes() - 1);
             asistenciaACursoRepository.save(asistenciaCurso);
             respond.setCodigo(200);
         }
-
         return respond;
     }
     @Transactional
@@ -88,10 +91,45 @@ public class AsistenciaACursoService {
         cronogramaCursoRepository.save(cronogramaActualizado);
     }
 
+    @Transactional
+    public List<MisCursosPreviewRespondDto> obtenerCursosFinalizadosAlumno(Long idAlumno){
+        List<AsistenciaCurso> asistenciaCursos=asistenciaACursoRepository.findTop6ByAlumnoAndCursoFinalizado(idAlumno, PageRequest.of(0,6));
+        List<MisCursosPreviewRespondDto> respond=new ArrayList<>();
+
+        if(asistenciaCursos.isEmpty()){
+            MisCursosPreviewRespondDto respondDto=new MisCursosPreviewRespondDto();
+            respondDto.setCodigo(900);
+            respond.add(respondDto);
+            return respond;
+        }
+        for(AsistenciaCurso asis:asistenciaCursos){
+            CronogramaCurso cronograma=asis.getCronogramaCurso();
+            Curso curso=cronograma.getCurso();
+            Sede sede=cronograma.getSede();
+
+            MisCursosPreviewRespondDto dto=new MisCursosPreviewRespondDto();
+            dto.setIdCronograma(cronograma.getIdCronograma());
+            dto.setDia(cronograma.getDia());
+            String ubicacion;
+            if (curso.getModalidad() == ModalidadClase.Virtual) {
+                ubicacion = "Virtual";
+            } else {
+                ubicacion = sede.getDireccionSede();
+            }
+            dto.setHora(curso.getHora());
+            dto.setSede(ubicacion);
+            dto.setNombreCurso(curso.getNombreCurso());
+            dto.setCodigo(200);
+            respond.add(dto);
+        }
+        return respond;
+    }
+
     private boolean estaIncriptoAlCurso(Long idAlumno, Long idCronograma){
         Optional<CronogramaCurso> catedra=cronogramaCursoRepository.findById(idCronograma);
         Long idCurso=catedra.get().getCurso().getIdCurso();
        return asistenciaACursoRepository.existeInscripcionACurso(idAlumno,idCurso); //chquea que no se quiera meter dos veces al mismo curso
     }
+
 }
 
