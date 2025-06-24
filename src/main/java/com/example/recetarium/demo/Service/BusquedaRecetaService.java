@@ -101,38 +101,124 @@ public class BusquedaRecetaService {//AUNQUE SEA UN SERVICE NUEVO USA LOS REPOSI
     }
     //
     //MAIN BARRA DE BUSQUEDA CON FILTROS
-    public Page<RecetaPreviewRespondDto> buscarRecetasMainFiltro(BusquedaMainRecetaRequestDto dto,Pageable pageable){
-        Usuario usuario=null;
-        if(dto.getIdUsuario()!=null){
-            Optional<Usuario> usuarioOp=repoUsuario.findById(dto.getIdUsuario());
-            if(usuarioOp.isPresent()){
-                usuario=usuarioOp.get();//obtengo usuario para saber si esta en favoritos
-            }
-            else{
+    public Page<RecetaPreviewRespondDto> buscarRecetasMainFiltro(BusquedaMainRecetaRequestDto dto, Pageable pageable) {
+        //verifico que exista usuairo
+        Usuario usuario = null;
+        if (dto.getIdUsuario() != null) {
+            Optional<Usuario> usuarioOp = repoUsuario.findById(dto.getIdUsuario());
+            if (usuarioOp.isPresent()) {
+                usuario = usuarioOp.get();
+            } else {
                 return Page.empty();
             }
         }
-        //
-        Page<Receta> recetasPage=repoReceta.buscarRecetasPorNombreRecetaFiltroMain(dto.getPalabraClave(), pageable);
 
-        List<RecetaPreviewRespondDto> previews=new ArrayList<>();
-        for(Receta receta: recetasPage.getContent()){
-            RecetaPreviewRespondDto dtoResponse=new RecetaPreviewRespondDto();
+        Page<Receta> recetasPage = null;
+
+        // Sin filtros (solo nombre (opcional) y orden)
+        if (dto.getFiltrosIngredientes() == null && dto.getCantidadPersona() == null) {
+            //BUSCO POR PALABRA CLAVE EN ORDEN
+            recetasPage = repoReceta.buscarRecetasPorNombreRecetaFiltroMain(dto.getPalabraClave(), pageable);
+        }
+
+        // Solo filtro de ingrediente (sin cantidadPersona)
+        else if (dto.getFiltrosIngredientes() != null && dto.getCantidadPersona() == null) {
+            FiltroIngredienteDto filtro = dto.getFiltrosIngredientes();
+            if (filtro.isIncluir()) {
+                Optional<Ingrediente> ingredienteOp = repoIngrediente.findByNombre(filtro.getNombreIngrediente());
+                if (ingredienteOp.isEmpty()) return Page.empty();//verifico que exista el ingrediente
+
+                if (filtro.getUnidadDeseada() != null) {//verifico que quiera buscar por cantidad de unidad especifica
+                    Optional<Unidad> unidadOp = repoUnidad.findByDescripcion(filtro.getUnidadDeseada());
+                    if (unidadOp.isEmpty()) return Page.empty();//verifico que exista la unidad
+                    //BUSCO POR INGREDIENTE CON MAXIMO DE CANTIDAD
+                    recetasPage = repoReceta.buscarRecetasConFiltroIngredienteConConversion(
+                            dto.getPalabraClave(),
+                            filtro.getNombreIngrediente(),
+                            filtro.getUnidadDeseada(),
+                            filtro.getCanitidadMaxima(),
+                            pageable
+                    );
+                } else {//no busca por cantidad, solo por ingrediente
+                    //BUSCO POR INGREDIENTE (sin maximo de unidad)
+                    recetasPage = repoReceta.buscarRecetasPorIngredienteSinCantidad(
+                            dto.getPalabraClave(),
+                            filtro.getNombreIngrediente(),
+                            pageable
+                    );
+                }
+            } else {//excluye ingrediente
+                //BUSCO POR INGREDIENTE (EXCLUYENDOLO)
+                recetasPage = repoReceta.buscarRecetasExcluyendoIngrediente(
+                        dto.getPalabraClave(),
+                        filtro.getNombreIngrediente(),
+                        pageable
+                );
+            }
+        }
+
+        // Solo cantidadPersona
+        else if (dto.getFiltrosIngredientes() == null && dto.getCantidadPersona() != null) {
+            //BUSCO SOLO POR CANTIDAD DE PERSONAS (sin ingredientes)
+            recetasPage = repoReceta.buscarRecetasPorNombreRecetaFiltroMainPersonas(
+                    dto.getPalabraClave(),
+                    dto.getCantidadPersona(),
+                    pageable
+            );
+        }
+
+        // Filtro de ingrediente + cantidadPersona
+        else {
+            FiltroIngredienteDto filtro = dto.getFiltrosIngredientes();
+            if (filtro.isIncluir()) {
+                Optional<Ingrediente> ingredienteOp = repoIngrediente.findByNombre(filtro.getNombreIngrediente());
+                if (ingredienteOp.isEmpty()) return Page.empty();
+
+                if (filtro.getUnidadDeseada() != null) {
+                    Optional<Unidad> unidadOp = repoUnidad.findByDescripcion(filtro.getUnidadDeseada());
+                    if (unidadOp.isEmpty()) return Page.empty();
+                    //BUSCO POR INGREDIENTE CON MAXIMO DE CANTIDAD Y PENSADA PARA X PERSONAS
+                    recetasPage = repoReceta.buscarRecetasConFiltroIngredienteConConversionPersona(
+                            dto.getPalabraClave(),
+                            filtro.getNombreIngrediente(),
+                            filtro.getUnidadDeseada(),
+                            filtro.getCanitidadMaxima(),
+                            dto.getCantidadPersona(),
+                            pageable
+                    );
+                } else {
+                    //BUSCO POR INGREDIENTE (sin maximo de unidad) Y PENSADA PARA X PERSONAS
+                    recetasPage = repoReceta.buscarRecetasPorIngredienteSinCantidadPersona(
+                            dto.getPalabraClave(),
+                            filtro.getNombreIngrediente(),
+                            dto.getCantidadPersona(),
+                            pageable
+                    );
+                }
+            } else {
+                //BUSCO POR INGREDIENTE (EXCLUYENDOLO) CON MAXIMO DE CANTIDAD
+                recetasPage = repoReceta.buscarRecetasExcluyendoIngredientePersona(
+                        dto.getPalabraClave(),
+                        filtro.getNombreIngrediente(),
+                        dto.getCantidadPersona(),
+                        pageable
+                );
+            }
+        }
+
+        // Armo la respuesta
+        List<RecetaPreviewRespondDto> previews = new ArrayList<>();
+        for (Receta receta : recetasPage.getContent()) {
+            RecetaPreviewRespondDto dtoResponse = new RecetaPreviewRespondDto();
             dtoResponse.setIdReceta(receta.getIdReceta());
             dtoResponse.setTitulo(receta.getNombreReceta());
             dtoResponse.setImagenPrincipal(receta.getImagen());
             dtoResponse.setAutor(receta.getUsuario().getAlias());
             dtoResponse.setClasificacionPromedio(calcularPromedio(receta));
-            if(usuario!=null){
-                boolean favorito=repoFavoritos.existsByUsuarioAndReceta(usuario,receta);
-                dtoResponse.setEnFavoritos(favorito);
-            }
-            else{
-                dtoResponse.setEnFavoritos(false);
-            }
+            dtoResponse.setEnFavoritos(usuario != null && repoFavoritos.existsByUsuarioAndReceta(usuario, receta));
             previews.add(dtoResponse);
         }
-        return new PageImpl<>(previews,pageable,recetasPage.getTotalElements());
+        return new PageImpl<>(previews, pageable, recetasPage.getTotalElements());
     }
 
     ///////////////////////privados paaaaaaaaaa/////////////////////////////////////

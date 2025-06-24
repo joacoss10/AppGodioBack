@@ -1,11 +1,31 @@
 package com.example.recetarium.demo.DTOs;
 
+import java.util.List;
+
 public class BusquedaMainRecetaRequestDto {
     private String palabraClave;//valor de la lupa
     private boolean porAutor;//orden
     private boolean ordenAlfabetico;//orden
     private boolean ordenFecha;//orden
-    private Long idUsuario;
+    private Long idUsuario;//traer en favs o no
+    private FiltroIngredienteDto filtrosIngredientes;// excluir o incluir cierto/s ingrediente/s
+    private Integer cantidadPersona;
+
+    public Integer getCantidadPersona() {
+        return cantidadPersona;
+    }
+
+    public void setCantidadPersona(Integer cantidadPersona) {
+        this.cantidadPersona = cantidadPersona;
+    }
+
+    public FiltroIngredienteDto getFiltrosIngredientes() {
+        return filtrosIngredientes;
+    }
+
+    public void setFiltrosIngredientes(FiltroIngredienteDto filtrosIngredientes) {
+        this.filtrosIngredientes = filtrosIngredientes;
+    }
 
     public String getPalabraClave() {
         return palabraClave;

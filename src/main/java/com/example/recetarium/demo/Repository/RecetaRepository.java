@@ -35,7 +35,8 @@ Page<Receta> buscarMisRecetasPorNombre(
         Pageable pageable
 );
 ///////MAIN///////////////////////////////////////
-    //POR NOMBRE RECETA
+           //SIN CANTIDAD//
+    //POR NOMBRE RECETA SEGUN ORDEN (orden y nombre es opcional)//
     @Query("""
     SELECT r FROM Receta r
     WHERE LOWER(r.nombreReceta) LIKE LOWER(CONCAT('%', :palabraClave, '%'))
@@ -43,6 +44,137 @@ Page<Receta> buscarMisRecetasPorNombre(
 """)
     Page<Receta> buscarRecetasPorNombreRecetaFiltroMain(
             @Param("palabraClave") String palabraClave,
+            Pageable pageable
+    );
+    //POR NOMBRE RECETA SEGUN FILTRO (ingrediente y cantidad) Y/O ORDEN (filtro es obligatorio, nombre y orden son opcionales)//
+    //filtro: ingrediente (incluye) y cantidad
+    @Query("""
+        SELECT r FROM Receta r
+        JOIN r.utilizado ir
+        JOIN ir.ingrediente i
+        JOIN ir.unidad uOrigen
+        JOIN Conversion c ON c.unidadOrigen = uOrigen
+        JOIN Unidad uDestino ON c.unidadDestino = uDestino
+        WHERE LOWER(r.nombreReceta) LIKE LOWER(CONCAT('%', :palabraClave, '%'))
+        AND r.estado = com.example.recetarium.demo.Model.Enums.EstadoReceta.Validada
+        AND LOWER(i.nombre) = LOWER(:nombreIngrediente)
+        AND LOWER(uDestino.descripcion) = LOWER(:unidadDeseada)
+        AND (ir.cantidad * c.factorConversiones) <= :cantidadMaxima + 0.0001
+    """)
+    Page<Receta> buscarRecetasConFiltroIngredienteConConversion(
+            @Param("palabraClave") String palabraClave,
+            @Param("nombreIngrediente") String nombreIngrediente,
+            @Param("unidadDeseada") String unidadDeseada,
+            @Param("cantidadMaxima") Double cantidadMaxima,
+            Pageable pageable
+    );
+    //
+    //filtro:ingrediente (incluye)
+    @Query("""
+        SELECT r FROM Receta r
+        JOIN r.utilizado u
+        JOIN u.ingrediente i
+        WHERE LOWER(r.nombreReceta) LIKE LOWER(CONCAT('%', :palabraClave, '%'))
+          AND LOWER(i.nombre) = LOWER(:nombreIngrediente)
+          AND r.estado = com.example.recetarium.demo.Model.Enums.EstadoReceta.Validada
+    """)
+    Page<Receta> buscarRecetasPorIngredienteSinCantidad(
+            @Param("palabraClave") String palabraClave,
+            @Param("nombreIngrediente") String nombreIngrediente,
+            Pageable pageable
+    );
+
+    //
+    //filtro: sin ingrediente (lo exluye)
+    @Query("""
+        SELECT r FROM Receta r
+        WHERE LOWER(r.nombreReceta) LIKE LOWER(CONCAT('%', :palabraClave, '%'))
+        AND r.estado = com.example.recetarium.demo.Model.Enums.EstadoReceta.Validada
+        AND r.idReceta NOT IN (
+            SELECT u.receta.idReceta FROM Utilizado u
+            JOIN u.ingrediente i
+            WHERE LOWER(i.nombre) = LOWER(:nombreIngrediente)
+        )
+    """)
+    Page<Receta> buscarRecetasExcluyendoIngrediente(
+            @Param("palabraClave") String palabraClave,
+            @Param("nombreIngrediente") String nombreIngrediente,
+            Pageable pageable
+    );
+    ////////////////////////////////////////
+    //CON CANTIDAD//
+    //POR NOMBRE RECETA SEGUN ORDEN (orden y nombre es opcional) + cantidad de personas//
+    @Query("""
+        SELECT r FROM Receta r
+        WHERE LOWER(r.nombreReceta) LIKE LOWER(CONCAT('%', :palabraClave, '%'))
+          AND r.estado = com.example.recetarium.demo.Model.Enums.EstadoReceta.Validada
+          AND r.cantidadPersonas = :cantidadPersonas
+    """)
+    Page<Receta> buscarRecetasPorNombreRecetaFiltroMainPersonas(
+            @Param("palabraClave") String palabraClave,
+            @Param("cantidadPersonas") Integer cantidadPersonas,
+            Pageable pageable
+    );
+
+    //POR NOMBRE RECETA SEGUN FILTRO (ingrediente y cantidad) Y/O ORDEN (filtro es obligatorio, nombre y orden son opcionales) + cantidad de personas//
+    //filtro: ingrediente (incluye) y cantidad
+    @Query("""
+        SELECT r FROM Receta r
+        JOIN r.utilizado ir
+        JOIN ir.ingrediente i
+        JOIN ir.unidad uOrigen
+        JOIN Conversion c ON c.unidadOrigen = uOrigen
+        JOIN Unidad uDestino ON c.unidadDestino = uDestino
+        WHERE LOWER(r.nombreReceta) LIKE LOWER(CONCAT('%', :palabraClave, '%'))
+          AND r.estado = com.example.recetarium.demo.Model.Enums.EstadoReceta.Validada
+          AND LOWER(i.nombre) = LOWER(:nombreIngrediente)
+          AND LOWER(uDestino.descripcion) = LOWER(:unidadDeseada)
+          AND (ir.cantidad * c.factorConversiones) <= :cantidadMaxima + 0.0001
+          AND r.cantidadPersonas = :cantidadPersonas
+    """)
+    Page<Receta> buscarRecetasConFiltroIngredienteConConversionPersona(
+            @Param("palabraClave") String palabraClave,
+            @Param("nombreIngrediente") String nombreIngrediente,
+            @Param("unidadDeseada") String unidadDeseada,
+            @Param("cantidadMaxima") Double cantidadMaxima,
+            @Param("cantidadPersonas") Integer cantidadPersonas,
+            Pageable pageable
+    );
+    //
+    //filtro:ingrediente (incluye), sin unidad + cantidad de personas
+    @Query("""
+    SELECT r FROM Receta r
+    JOIN r.utilizado u
+    JOIN u.ingrediente i
+    WHERE LOWER(r.nombreReceta) LIKE LOWER(CONCAT('%', :palabraClave, '%'))
+      AND LOWER(i.nombre) = LOWER(:nombreIngrediente)
+      AND r.estado = com.example.recetarium.demo.Model.Enums.EstadoReceta.Validada
+      AND r.cantidadPersonas = :cantidadPersonas
+""")
+    Page<Receta> buscarRecetasPorIngredienteSinCantidadPersona(
+            @Param("palabraClave") String palabraClave,
+            @Param("nombreIngrediente") String nombreIngrediente,
+            @Param("cantidadPersonas") Integer cantidadPersonas,
+            Pageable pageable
+    );
+
+    //
+    //filtro: sin ingrediente (lo exluye)+ cantidad de personas
+    @Query("""
+        SELECT r FROM Receta r
+        WHERE LOWER(r.nombreReceta) LIKE LOWER(CONCAT('%', :palabraClave, '%'))
+          AND r.estado = com.example.recetarium.demo.Model.Enums.EstadoReceta.Validada
+          AND r.cantidadPersonas = :cantidadPersonas
+          AND r.idReceta NOT IN (
+              SELECT u.receta.idReceta FROM Utilizado u
+              JOIN u.ingrediente i
+              WHERE LOWER(i.nombre) = LOWER(:nombreIngrediente)
+          )
+    """)
+    Page<Receta> buscarRecetasExcluyendoIngredientePersona(
+            @Param("palabraClave") String palabraClave,
+            @Param("nombreIngrediente") String nombreIngrediente,
+            @Param("cantidadPersonas") Integer cantidadPersonas,
             Pageable pageable
     );
 ///////////////////////////////////////////////

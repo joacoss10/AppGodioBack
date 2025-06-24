@@ -30,7 +30,7 @@ public class BusquedaRecetaController {
         Pageable pageable = PageRequest.of(page, size);
         return serviceBusqueda.buscarFavoritosPorNombre(idUsuario,palabraClave,pageable);
     }
-    @GetMapping("/main")
+    @PostMapping("/main")
     public Page<RecetaPreviewRespondDto> buscarEnMain(@RequestBody BusquedaMainRecetaRequestDto dto,@RequestParam(defaultValue = "0") int page,@RequestParam(defaultValue = "5") int size){
         List<Sort.Order> ordenes = new ArrayList<>();
         //

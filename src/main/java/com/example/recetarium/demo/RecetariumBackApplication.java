@@ -11,5 +11,4 @@ public class RecetariumBackApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(RecetariumBackApplication.class, args);
 	}
-
 }
