@@ -83,6 +83,7 @@ public class CursoService {
         respondDto.setPrecio(curso.getPrecio());
         respondDto.setTitulo(curso.getNombreCurso());
         respondDto.setIdCronograma(cronograma.get().getIdCronograma());
+        respondDto.setIdCurso(curso.getIdCurso());
 
         return respondDto;
     }

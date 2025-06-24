@@ -1,6 +1,7 @@
 package com.example.recetarium.demo.Repository;
 
 import com.example.recetarium.demo.Model.AsistenciaCurso;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -12,7 +13,13 @@ import java.util.Optional;
 
 @Repository
 public interface AsistenciaACursoRepository extends JpaRepository<AsistenciaCurso,Long> {
-    Optional<AsistenciaCurso> findByCronogramaCurso_IdCronogramaAndAlumno_IdAlumno(Long idCronograma, Long idAlumno);
+
+    @Query("""
+    SELECT ac
+    FROM AsistenciaCurso ac
+    WHERE ac.alumno.idAlumno = :idAlumno
+      AND ac.cronogramaCurso.fechaFin >= CURRENT_DATE
+""")
     List<AsistenciaCurso> findByAlumno_IdAlumno(Long idAlumno);
     @Query("""
     SELECT COUNT(ac) > 0
@@ -38,6 +45,14 @@ public interface AsistenciaACursoRepository extends JpaRepository<AsistenciaCurs
 """)
     void deleteByAlumnoAndCronograma(@Param("idAlumno") Long idAlumno, @Param("idCronograma") Long idCronograma);
 
+    @Query("""
+    SELECT ac
+    FROM AsistenciaCurso ac
+    WHERE ac.alumno.idAlumno = :idAlumno
+      AND ac.cronogramaCurso.fechaFin < CURRENT_DATE
+    ORDER BY ac.cronogramaCurso.fechaFin DESC
+""")
+    List<AsistenciaCurso> findTop6ByAlumnoAndCursoFinalizado(@Param("idAlumno") Long idAlumno, Pageable pageable);
 
 
 }

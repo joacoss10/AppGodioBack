@@ -9,6 +9,7 @@ public class InfoGeneralCursoRespondDto {
     private String descripcion;
     private Time hora;
     private Long idCronograma;
+    private Long idCurso;
     private List<String> recomendaciones;
     private int duracion;
     private LocalDate fechaInicio;
@@ -19,6 +20,9 @@ public class InfoGeneralCursoRespondDto {
     private float bonificacion;
     private float precioFinal;
 
+    public void setIdCurso(Long idCurso) {
+        this.idCurso = idCurso;
+    }
 
     public String getDescripcion() {
         return descripcion;
@@ -122,5 +126,9 @@ public class InfoGeneralCursoRespondDto {
 
     public void setVacantes(int vacantes) {
         this.vacantes = vacantes;
+    }
+
+    public Long getIdCurso() {
+        return idCurso;
     }
 }
