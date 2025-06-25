@@ -18,6 +18,15 @@ public class RecetaDetalleResponseDto {
     private boolean favorito;
     private Long idReceta;//le tengo que pasar el id por si la agrega como favs, para que el front me lo pase
     private Date fechaCreacion;
+    private Integer clasificacionIndividualUsuario;//en caso de que este logeado y halla clasificado la receta.
+
+    public Integer getClasificacionIndividualUsuario() {
+        return clasificacionIndividualUsuario;
+    }
+
+    public void setClasificacionIndividualUsuario(Integer clasificacionIndividualUsuario) {
+        this.clasificacionIndividualUsuario = clasificacionIndividualUsuario;
+    }
 
     public Long getIdReceta() {
         return idReceta;

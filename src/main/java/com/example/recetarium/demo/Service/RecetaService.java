@@ -361,22 +361,31 @@ public class RecetaService {
         //estrellitasssssss
         response.setPromedioCalificacion(calcularPromedio(receta));
         //coca
-        //la tiene en favs?
+        //la tiene en favs? la clasifico?
         if(idUsuario!=null){
             Optional<Usuario> usuarioOp=repoUsuario.findById(idUsuario);
             if(usuarioOp.isPresent()){
+                //favorito
                 boolean favorito=repoFavoritos.existsByUsuarioAndReceta(usuarioOp.get(), receta);
                 response.setFavorito(favorito);
+                //estrellitas
+                Optional<Calificacion> calificacionOp=repoCalificacion.findByUsuarioAndReceta(usuarioOp.get(), receta);
+                if(calificacionOp.isEmpty()){
+                    response.setClasificacionIndividualUsuario(null);
+                }else{
+                    response.setClasificacionIndividualUsuario(calificacionOp.get().getCalificacion());
+                }
             }
             else{
                 response.setFavorito(false);
+                response.setClasificacionIndividualUsuario(null);
             }
         }
         else{
             response.setFavorito(false);
+            response.setClasificacionIndividualUsuario(null);
         }
     return response;
-
     }
     //
     //OBTENER PREVIEW DEL MAIN con logeo o sin logeo
