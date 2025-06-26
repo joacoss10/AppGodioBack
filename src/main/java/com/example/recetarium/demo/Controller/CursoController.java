@@ -17,7 +17,7 @@ public class CursoController {
     @Autowired
     CursoService cursoService;
 
-    @GetMapping("/preview")
+    @GetMapping("/preview") //Este endpoint es publico
     public ResponseEntity<Page<CursoPreviewRespondDto>> obtenerPreviews(
             @RequestParam (defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
