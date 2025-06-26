@@ -1,9 +1,6 @@
 package com.example.recetarium.demo.Service;
 
-import com.example.recetarium.demo.DTOs.AlumnoRequestDto;
-import com.example.recetarium.demo.DTOs.CuentaCorrienteRespondDto;
-import com.example.recetarium.demo.DTOs.MedioDePagoRequestDto;
-import com.example.recetarium.demo.DTOs.MedioDePagoRespondDto;
+import com.example.recetarium.demo.DTOs.*;
 import com.example.recetarium.demo.Model.Alumno;
 import com.example.recetarium.demo.Model.CuentaCorriente;
 import com.example.recetarium.demo.Model.MedioDePago;
@@ -31,7 +28,7 @@ public class AlumnoService {
     @Autowired
     private UsuarioRepository usuarioRepository;
 
-    public void crearAlumno(AlumnoRequestDto requestDto){
+    public AlumnoRegistroRespondoDto crearAlumno(AlumnoRequestDto requestDto){
         JwtUtil jwtUtil=new JwtUtil();
         Alumno alumno=new Alumno();
         String alias=jwtUtil.getUserName(requestDto.getToken());
@@ -55,7 +52,9 @@ public class AlumnoService {
 
         usuario.get().setAlumno(alumno);
         usuarioRepository.save(usuario.get());
-
+        Optional<Usuario> id=usuarioRepository.findById(usuario.get().getIdUsuario());
+        AlumnoRegistroRespondoDto respond=new AlumnoRegistroRespondoDto(id.get().getAlumno().getIdAlumno());
+        return respond;
     }
     public CuentaCorrienteRespondDto obtenerCuentaCorriente(Long idAlumno){
        CuentaCorrienteRespondDto respond=new CuentaCorrienteRespondDto();

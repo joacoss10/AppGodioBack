@@ -1,5 +1,6 @@
 package com.example.recetarium.demo.Controller;
 
+import com.example.recetarium.demo.DTOs.AlumnoRegistroRespondoDto;
 import com.example.recetarium.demo.DTOs.AlumnoRequestDto;
 import com.example.recetarium.demo.Service.AlumnoService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,8 +17,8 @@ public class AlumnoController {
     private AlumnoService alumnoService;
 
     @PostMapping
-    public ResponseEntity<Void> crearAlumno(@RequestBody AlumnoRequestDto dto){
-        alumnoService.crearAlumno(dto);
-        return ResponseEntity.ok().build();
+    public AlumnoRegistroRespondoDto crearAlumno(@RequestBody AlumnoRequestDto dto){
+
+        return alumnoService.crearAlumno(dto);
     }
 }
