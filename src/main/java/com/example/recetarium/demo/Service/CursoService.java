@@ -66,9 +66,9 @@ public class CursoService {
             ubicacion="Virtual";
         }else ubicacion=sede.getDireccionSede();
 
-        float valorCurso=Math.round(curso.getPrecio());
-        float descuento=Math.round(sede.getBonificacionCursos()*100);
-        float precioFinal=Math.round(valorCurso-(valorCurso*sede.getBonificacionCursos()));
+        float valorCurso=curso.getPrecio();
+        float descuento=sede.getBonificacionCursos()*100;
+        float precioFinal=valorCurso-((valorCurso*descuento)/100);
 
         respondDto.setDescripcion(curso.getDescripcion());
         respondDto.setUbicacion(ubicacion);
