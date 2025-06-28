@@ -23,6 +23,7 @@ public class JwTSecurity {
                         .requestMatchers("/recetas/previews").permitAll()
                         .requestMatchers("/recetas/detalle").permitAll()
                         .requestMatchers("/curso/preview").permitAll()
+                        .requestMatchers("/sede/preview").permitAll()
                         .requestMatchers("/buscar/main").permitAll()
                         .anyRequest().authenticated()
                 )
