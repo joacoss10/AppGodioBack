@@ -5,6 +5,7 @@ public class LogginResponseDto {
     private int codigo;
     private Long alumno;
     private Long id;
+    private String alias;
 
     public Long getId() {
         return id;
@@ -12,6 +13,14 @@ public class LogginResponseDto {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public String getAlias() {
+        return alias;
+    }
+
+    public void setAlias(String alias) {
+        this.alias = alias;
     }
 
     public void setCodigo(int codigo) {
