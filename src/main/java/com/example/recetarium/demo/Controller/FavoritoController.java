@@ -26,6 +26,5 @@ public class FavoritoController {
     Page<RecetaPreviewRespondDto> obtenerFavoritos(@RequestParam Long idUsuario, @RequestParam(defaultValue = "0") int page,@RequestParam(defaultValue = "5") int size){
         Pageable pageable = PageRequest.of(page, size);
         return serviceFavorito.obtenerPreviewFavs(idUsuario,pageable);
-
     }
 }

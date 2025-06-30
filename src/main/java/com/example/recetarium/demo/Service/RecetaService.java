@@ -17,11 +17,14 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 @Service
 public class RecetaService {
     @Autowired
     private RecetaRepository repoReceta;
+    @Autowired
+    private repoConversion repoconversion;
     @Autowired
     private UsuarioRepository repoUsuario;
     @Autowired
@@ -445,6 +448,45 @@ public class RecetaService {
             previews.add(dto);
         }
         return new PageImpl<>(previews, pageable, recetaPage.getTotalElements());
+    }
+    ///////MODIFICAR/////////////
+    public RecetaAjustadaDto ajustarPorIngrediente(Long idReceta,ModificarIngredienteRequestDto ingredienteAmodificar){
+        Optional<Receta> recetaOp=repoReceta.findById(idReceta);
+        if(recetaOp.isEmpty()){
+            return null;
+        }
+        List<Utilizado> ingredientes= repoUtilizado.findByReceta(recetaOp.get());
+        Optional<Ingrediente> ingredienteOp=repoIngrediente.findByNombre(ingredienteAmodificar.getNombreIngrediente());
+        if(ingredienteOp.isEmpty()){
+            return null;
+        }
+        float cantidadOriginal=0;
+        float cantidadNueva=0;
+        for(Utilizado utilizado:ingredientes){
+            if(utilizado.getIngrediente().getIdIngrediente()==ingredienteOp.get().getIdIngrediente()){
+                cantidadOriginal=utilizado.getCantidad();
+                cantidadNueva=ingredienteAmodificar.getNuevaCantidad();
+                Optional<Unidad> unidadOp=repoUnidad.findByDescripcion(ingredienteAmodificar.getNuevaUnidad());
+                if(unidadOp.isEmpty()){
+                    return null;
+                }
+                Optional<Conversion>conversionOp=repoconversion.findByUnidadOrigenAndUnidadDestino(unidadOp.get(),utilizado.getUnidad());
+                if (conversionOp.isEmpty()) return null;
+                cantidadNueva=cantidadNueva*conversionOp.get().getFactorConversiones();
+                break;
+            }
+        }
+        if (cantidadOriginal == 0) return null;
+        float factor=cantidadNueva/cantidadOriginal;
+            List<IngredienteUsadoResponseDto> ajustados = new ArrayList<>();
+            for(Utilizado u:ingredientes){
+                IngredienteUsadoResponseDto dto=new IngredienteUsadoResponseDto();
+                dto.setNombreIngrediente(u.getIngrediente().getNombre());
+                dto.setUnidad(u.getUnidad().getDescripcion());
+                dto.setCantidad((u.getCantidad()*factor));
+                ajustados.add(dto);
+            }
+            return new RecetaAjustadaDto(recetaOp.get().getNombreReceta(),ajustados);
     }
 ///////////////////////privados paaaaaaaaaa/////////////////////////////////////
     private Double calcularPromedio(Receta receta) {

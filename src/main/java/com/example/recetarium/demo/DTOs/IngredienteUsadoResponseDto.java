@@ -3,7 +3,7 @@ package com.example.recetarium.demo.DTOs;
 public class IngredienteUsadoResponseDto {//utilizado
     private String nombreIngrediente;//mach con ingrediente
     private String unidad;//mach con unidad
-    private int cantidad;
+    private float cantidad;
     private String observacion;
 
     public String getNombreIngrediente() {
@@ -14,7 +14,7 @@ public class IngredienteUsadoResponseDto {//utilizado
         return unidad;
     }
 
-    public int getCantidad() {
+    public float getCantidad() {
         return cantidad;
     }
 
@@ -30,7 +30,7 @@ public class IngredienteUsadoResponseDto {//utilizado
         this.unidad = unidad;
     }
 
-    public void setCantidad(int cantidad) {
+    public void setCantidad(float cantidad) {
         this.cantidad = cantidad;
     }
 

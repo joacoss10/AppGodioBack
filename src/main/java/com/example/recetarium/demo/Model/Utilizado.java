@@ -9,7 +9,7 @@ public class Utilizado {
     private Long idUtilizado;
 
     @Column
-    private int cantidad;
+    private float cantidad;
     private String observaciones;
 
     @ManyToOne//(cascade = CascadeType.ALL)
@@ -24,7 +24,7 @@ public class Utilizado {
     @JoinColumn(name="ingrediente",referencedColumnName = "idIngrediente")
     private Ingrediente ingrediente;
 
-    public void setCantidad(int cantidad) {
+    public void setCantidad(float cantidad) {
         this.cantidad = cantidad;
     }
 
@@ -36,7 +36,7 @@ public class Utilizado {
         return idUtilizado;
     }
 
-    public int getCantidad() {
+    public float getCantidad() {
         return cantidad;
     }
 
