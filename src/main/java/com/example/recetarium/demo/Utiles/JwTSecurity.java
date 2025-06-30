@@ -21,7 +21,6 @@ public class JwTSecurity {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/auth/**").permitAll()
                         .requestMatchers("/recetas/previews").permitAll()
-                        .requestMatchers("/recetas/detalle").permitAll()
                         .requestMatchers("/curso/preview").permitAll()
                         .requestMatchers("/sede/preview").permitAll()
                         .requestMatchers("/buscar/main").permitAll()

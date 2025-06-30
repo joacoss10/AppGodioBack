@@ -19,6 +19,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
+
+
 @Service
 public class RecetaService {
     @Autowired
@@ -484,9 +486,12 @@ public class RecetaService {
                 dto.setNombreIngrediente(u.getIngrediente().getNombre());
                 dto.setUnidad(u.getUnidad().getDescripcion());
                 dto.setCantidad((u.getCantidad()*factor));
+                dto.setObservacion("");
                 ajustados.add(dto);
             }
-            return new RecetaAjustadaDto(recetaOp.get().getNombreReceta(),ajustados);
+            RecetaAjustadaDto devolver=new RecetaAjustadaDto(recetaOp.get().getNombreReceta(), ajustados);
+            return devolver;
+
     }
 ///////////////////////privados paaaaaaaaaa/////////////////////////////////////
     private Double calcularPromedio(Receta receta) {
